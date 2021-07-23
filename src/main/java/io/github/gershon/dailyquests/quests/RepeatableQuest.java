@@ -28,6 +28,9 @@ public class RepeatableQuest extends Quest {
         super(QuestType.REPEATABLE);
     }
 
+    public RepeatableQuest(String id) {
+        super(id, QuestType.REPEATABLE);
+    }
 
     public LocalDateTime getExpiryTime() {
         return expiryTime;

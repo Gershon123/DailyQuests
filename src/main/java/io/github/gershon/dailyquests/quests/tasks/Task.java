@@ -4,7 +4,7 @@ import org.spongepowered.api.entity.living.player.Player;
 
 public class Task {
     private String title;
-    private TaskType taskType;
+    private transient TaskType taskType;
     private int totalAmount;
     private int currentAmount;
 
@@ -14,7 +14,7 @@ public class Task {
         this.totalAmount = totalAmount;
         this.currentAmount = 0;
     }
-    
+
     public Task(TaskType taskType) {
         this.taskType = taskType;
     }

@@ -4,21 +4,16 @@ import com.google.gson.*;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.adapters.RuntimeTypeAdapterFactory;
 import io.github.gershon.dailyquests.quests.Quest;
-import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class Database {
+public class QuestStorage {
     private final File directory = new File("config/" + DailyQuests.ID + "/quests/");
     private RuntimeTypeAdapterFactory<Quest> questTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Quest.class, "questType")
@@ -32,17 +27,17 @@ public class Database {
             .registerTypeAdapterFactory(taskTypeAdapterFactory)
             .create();
 
-    public void loadDatabase(ArrayList<Quest> quests) {
-        DailyQuests.getInstance().getLogger().info("Loading Database...");
+    public void loadQuests(ArrayList<Quest> quests) {
+        int questsLoaded = 0;
         try {
             File[] files = directory.listFiles();
 
             for (File file : files) {
                 if (file.isFile()) {
                     try {
-                        DailyQuests.getInstance().getLogger().info("Trying to import " + file.getName());
                         String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                         quests.add(gson.fromJson(content, Quest.class));
+                        questsLoaded++;
                     } catch (Exception e) {
                         DailyQuests.getInstance().getLogger().error("Failed to import " + file.getName());
                         DailyQuests.getInstance().getLogger().error("Error: " + e.getMessage());
@@ -52,32 +47,19 @@ public class Database {
         } catch (Exception e) {
             DailyQuests.getInstance().getLogger().error(e.getMessage());
         }
+        DailyQuests.getInstance().getLogger().info("Loaded " + questsLoaded + " quests");
     }
 
     public void storeQuests(ArrayList<Quest> quests) {
         if (quests != null) {
             quests.forEach(quest -> {
+                // IMPORTANT - THIS SHOULD BE EXTENSIVELY TESTED TO MAKE SURE SAVING / LOADING WORKS CORRECTLY
                 String json = gson.toJson(quest, Quest.class);
-                String fileName = directory.getPath() + "/" + quest.getId() + ".json";
-                writeToFile(fileName, json);
+                String dir = directory.getPath() + "/";
+                String fileName = quest.getId() + ".json";
+                io.github.gershon.dailyquests.utils.FileUtils.writeToFile(dir, fileName, json);
             });
         }
     }
 
-    public void closeDatabase() {
-        //db.close();
-    }
-
-    private void writeToFile(String fileName, String json) {
-        try {
-            File questFile = new File(fileName);
-            questFile.createNewFile();
-            FileWriter writer = new FileWriter(fileName);
-            writer.write(json);
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
 }

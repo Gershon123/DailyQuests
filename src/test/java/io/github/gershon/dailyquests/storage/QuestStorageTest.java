@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-class DatabaseTest {
+class QuestStorageTest {
 
     ArrayList<Quest> quests;
-    Database database;
+    QuestStorage questStorage;
 
     @BeforeEach
     void beforeEach() {
@@ -19,12 +19,12 @@ class DatabaseTest {
         quests.add(QuestUtils.createRepeatableQuest("test1", "", TaskType.BREAK_BLOCK));
         quests.add(QuestUtils.createRepeatableQuest("test2", "", TaskType.HARVEST_APRICORN));
         quests.add(QuestUtils.createRepeatableQuest("test3", "", TaskType.CATCH_POKEMON));
-        database = new Database();
+        questStorage = new QuestStorage();
     }
 
     @Test
     void storeQuests() {
-        //database.storeQuests(quests);
+        //questStorage.storeQuests(quests);
     }
 
 }

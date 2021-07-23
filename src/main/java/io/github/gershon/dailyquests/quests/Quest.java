@@ -22,7 +22,7 @@ public abstract class Quest {
     private Task task;
     private ArrayList<Reward> rewards;
     private ItemType icon;
-    private QuestType questType;
+    private transient QuestType questType;
 
     public Quest(String id, String title, Task task, ArrayList<Reward> rewards, ItemType icon, QuestType questType) {
         this.id = id;
@@ -33,11 +33,17 @@ public abstract class Quest {
         this.questType = questType;
     }
 
+    public Quest(String id, QuestType questType) {
+        this.id = id;
+        this.questType = questType;
+    }
+
     public Quest(QuestType questType) {
         this.questType = questType;
     }
 
-    public Quest() { }
+    public Quest() {
+    }
 
     public String getId() {
         return id;

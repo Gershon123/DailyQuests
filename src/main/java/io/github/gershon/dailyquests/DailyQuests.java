@@ -6,8 +6,7 @@ import io.github.gershon.dailyquests.commands.BaseCommand;
 import io.github.gershon.dailyquests.config.Config;
 import io.github.gershon.dailyquests.listeners.*;
 import io.github.gershon.dailyquests.quests.Quest;
-import io.github.gershon.dailyquests.storage.Database;
-import io.github.gershon.dailyquests.utils.QuestUtils;
+import io.github.gershon.dailyquests.storage.QuestStorage;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -49,7 +48,7 @@ public class DailyQuests {
     public static final String DESC = "Repeatable & one time quests";
 
     public final Map<UUID, List<Quest>> playerMap = new HashMap<UUID, List<Quest>>();
-    public final Database database = new Database();
+    public final QuestStorage questStorage = new QuestStorage();
 
     @Inject
     private Logger logger;
@@ -88,7 +87,7 @@ public class DailyQuests {
     public void onServerStart(GameInitializationEvent e) {
         instance = this;
         configManager = HoconConfigurationLoader.builder().setPath(configDir.resolve("dailyquests.conf")).build();
-        database.loadDatabase(quests);
+        questStorage.loadQuests(quests);
         Config.setup(configDir, configManager);
         logger.info("Registering listeners...");
         registerListeners();
@@ -114,7 +113,6 @@ public class DailyQuests {
 
     @Listener
     public void onServerClose(GameStoppingServerEvent e) {
-        database.closeDatabase();
         logger.info("Plugin stopped.");
     }
 
@@ -125,7 +123,7 @@ public class DailyQuests {
 
     public void addQuest(Quest quest) {
         DailyQuests.getInstance().getQuests().add(quest);
-        database.storeQuests(quests);
+        questStorage.storeQuests(quests);
     }
 
     private void registerCommands() {
@@ -162,7 +160,7 @@ public class DailyQuests {
 
     public void updateQuests(ArrayList<Quest> quests) {
         this.quests = quests;
-        database.storeQuests(quests);
+        questStorage.storeQuests(quests);
     }
 
     @Listener
