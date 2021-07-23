@@ -14,6 +14,10 @@ public class Task {
         this.totalAmount = totalAmount;
         this.currentAmount = 0;
     }
+    
+    public Task(TaskType taskType) {
+        this.taskType = taskType;
+    }
 
     public String getTitle() {
         return title;
@@ -39,5 +43,6 @@ public class Task {
         this.currentAmount = currentAmount;
     }
 
-    public void completeTask(Player player) {}
+    public void completeTask(Player player) {
+    }
 }

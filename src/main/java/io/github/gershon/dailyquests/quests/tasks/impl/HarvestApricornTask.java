@@ -20,6 +20,10 @@ public class HarvestApricornTask extends Task {
         apricorn = EnumApricorns.Black;
     }
 
+    public HarvestApricornTask() {
+        super(TaskType.HARVEST_APRICORN);
+    }
+
     public EnumApricorns getApricorn() {
         return apricorn;
     }

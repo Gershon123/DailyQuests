@@ -2,6 +2,7 @@ package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.quests.Quest;
+import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
 import io.github.gershon.dailyquests.utils.QuestUtils;
 import org.spongepowered.api.command.CommandException;
@@ -42,7 +43,13 @@ public class QuestInfo {
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTask Title: " + quest.getTask().getTitle())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTask Amount: " + quest.getTask().getTotalAmount())));
 
-                        switch (quest.getTask().getTaskType()) {
+                        TaskType taskType = quest.getTask().getTaskType();
+
+                        if (taskType == null) {
+                            player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cTask is missing a type")));
+                            return CommandResult.success();
+                        }
+                        switch (taskType) {
                             case HARVEST_APRICORN:
                                 HarvestApricornTask task = (HarvestApricornTask) quest.getTask();
                                 player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bApricorn: " + task.getApricorn())));

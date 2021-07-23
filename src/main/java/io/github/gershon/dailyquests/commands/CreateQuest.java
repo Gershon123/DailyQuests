@@ -48,7 +48,7 @@ public class CreateQuest {
                         }
 
                         TaskType taskType = TaskType.valueOf(task);
-                        DailyQuests.getInstance().getQuests().add(QuestUtils.createRepeatableQuest(id, name, taskType));
+                        DailyQuests.getInstance().addQuest(QuestUtils.createRepeatableQuest(id, name, taskType));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aCreated Quest: " + name)));
 
                     }

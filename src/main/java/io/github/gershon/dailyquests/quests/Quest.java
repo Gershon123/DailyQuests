@@ -1,11 +1,14 @@
 package io.github.gershon.dailyquests.quests;
 
+import com.google.gson.annotations.Expose;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
+import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.utils.QuestUtils;
 import net.minecraft.item.Item;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -18,10 +21,10 @@ public abstract class Quest {
     private String title;
     private Task task;
     private ArrayList<Reward> rewards;
-    private Item icon;
+    private ItemType icon;
     private QuestType questType;
 
-    public Quest(String id, String title, Task task, ArrayList<Reward> rewards, Item icon, QuestType questType) {
+    public Quest(String id, String title, Task task, ArrayList<Reward> rewards, ItemType icon, QuestType questType) {
         this.id = id;
         this.rewards = rewards;
         this.task = task;
@@ -30,9 +33,11 @@ public abstract class Quest {
         this.questType = questType;
     }
 
-    public Quest(String id) {
-        this.id = id;
+    public Quest(QuestType questType) {
+        this.questType = questType;
     }
+
+    public Quest() { }
 
     public String getId() {
         return id;
@@ -50,7 +55,7 @@ public abstract class Quest {
         return rewards;
     }
 
-    public Item getIcon() {
+    public ItemType getIcon() {
         return icon;
     }
 

@@ -2,7 +2,8 @@ package io.github.gershon.dailyquests.quests;
 
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
-import net.minecraft.item.Item;
+import org.spongepowered.api.item.ItemType;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class RepeatableQuest extends Quest {
             String title,
             Task task,
             ArrayList<Reward> rewards,
-            Item icon,
+            ItemType icon,
             QuestType questType,
             LocalDateTime expiryTime
     ) {
@@ -23,9 +24,10 @@ public class RepeatableQuest extends Quest {
         this.expiryTime = expiryTime;
     }
 
-    public RepeatableQuest(String id) {
-        super(id);
+    public RepeatableQuest() {
+        super(QuestType.REPEATABLE);
     }
+
 
     public LocalDateTime getExpiryTime() {
         return expiryTime;

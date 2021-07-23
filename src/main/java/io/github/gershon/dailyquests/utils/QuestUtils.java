@@ -7,7 +7,6 @@ import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskFactory;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
-import net.minecraft.item.Item;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.time.LocalDateTime;
@@ -20,11 +19,10 @@ import java.util.stream.Collectors;
 public class QuestUtils {
 
     public static Quest createRepeatableQuest(String id, String title, TaskType taskType) {
-        Item icon = new Item();
         LocalDateTime time = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
         ArrayList<Reward> rewards = new ArrayList<Reward>();
         Task task = TaskFactory.createTask(title, taskType, 1);
-        return new RepeatableQuest(id, title, task, rewards, icon, QuestType.REPEATABLE, time);
+        return new RepeatableQuest(id, title, task, rewards, null, QuestType.REPEATABLE, time);
     }
 
     public static boolean questExists(String id, ArrayList<Quest> quests) {

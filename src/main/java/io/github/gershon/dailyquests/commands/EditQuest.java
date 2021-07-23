@@ -53,6 +53,7 @@ public class EditQuest {
                         Map<String, String> properties = Splitter.on(" ").withKeyValueSeparator("=").split(cmdArgs);
                         handleEditing(player, quest, properties);
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aQuest " + quest.getId() + " has been updated!")));
+                        DailyQuests.getInstance().updateQuests(DailyQuests.getInstance().getQuests());
 
                     }
                     return CommandResult.success();
