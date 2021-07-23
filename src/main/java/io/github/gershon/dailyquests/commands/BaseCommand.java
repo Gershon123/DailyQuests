@@ -11,6 +11,7 @@ public class BaseCommand {
             .child(new ListQuests().getCommandSpec(), "list")
             .child(new QuestInfo().getCommandSpec(), "info")
             .child(new MyQuests().getCommandSpec(), "myquests")
+            .child(new EditQuest().getCommandSpec(), "edit")
             .build();
 
     public CommandSpec getCommandSpec() {

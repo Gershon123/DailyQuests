@@ -1,15 +1,15 @@
 package io.github.gershon.dailyquests.utils;
 
-import com.pixelmonmod.pixelmon.enums.items.EnumPokeballs;
-import com.pixelmonmod.pixelmon.items.ItemPokeball;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
+import io.github.gershon.dailyquests.quests.tasks.TaskFactory;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import net.minecraft.item.Item;
 import org.spongepowered.api.entity.living.player.Player;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 public class QuestUtils {
 
     public static Quest createRepeatableQuest(String id, String title, TaskType taskType) {
-        Item icon = new ItemPokeball(EnumPokeballs.PokeBall);
+        Item icon = new Item();
         LocalDateTime time = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
         ArrayList<Reward> rewards = new ArrayList<Reward>();
-        Task task = new Task("", taskType, 1);
+        Task task = TaskFactory.createTask(title, taskType, 1);
         return new RepeatableQuest(id, title, task, rewards, icon, QuestType.REPEATABLE, time);
     }
 
@@ -48,6 +48,10 @@ public class QuestUtils {
         return randomQuests;
     }
 
+    public static Quest getQuest(List<Quest> quests, String id) {
+        return quests.stream().filter(quest1 -> quest1.getId().equals(id)).findAny().orElse(null);
+    }
+
     public static List<Quest> removeQuest(List<Quest> quests, String id) {
         return quests.stream().filter(quest -> !quest.getId().equals(id)).collect(Collectors.toList());
     }
@@ -58,8 +62,9 @@ public class QuestUtils {
 
     public static void handleQuestsTaskUpdate(List<Quest> quests, int amount, Player player) {
         quests.forEach(quest -> {
-            quest.getTask().setAmount(quest.getTask().getAmount() - amount);
-            if (quest.getTask().getAmount() <= 0) {
+            quest.getTask().setCurrentAmount(quest.getTask().getCurrentAmount() + amount);
+            if (quest.getTask().getCurrentAmount() >= quest.getTask().getTotalAmount()) {
+                quest.getTask().completeTask(player);
                 quest.completeQuest(player);
             }
         });

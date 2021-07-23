@@ -8,6 +8,7 @@ import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.utils.QuestUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.spongepowered.api.entity.living.player.Player;
+
 import java.util.List;
 
 public class CaptureListener {

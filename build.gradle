@@ -40,6 +40,7 @@ repositories {
 dependencies {
     implementation 'junit:junit:4.12'
     implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    implementation("com.google.guava:guava:30.1.1-jre")
     compile 'org.spongepowered:spongeapi:7.3.0'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
@@ -53,10 +54,10 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
 
-            // copy everything else, thats not the mcmod.info
+    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }

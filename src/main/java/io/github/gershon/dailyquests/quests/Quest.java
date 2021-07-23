@@ -58,6 +58,10 @@ public abstract class Quest {
         return questType;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void completeQuest(Player player) {
         rewards.forEach(reward -> reward.giveReward());
         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aYou have completed the " + getTitle() + " quest!")));

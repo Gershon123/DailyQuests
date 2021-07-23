@@ -1,6 +1,6 @@
 import io.github.gershon.dailyquests.utils.TaskUtils;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TaskUtilsTest {
 
