@@ -12,7 +12,7 @@ public class PlayerJoinListener {
     public void PlayerLogin(ClientConnectionEvent.Login e) {
         User p = e.getTargetUser();
         if (DailyQuests.getInstance().playerMap.get(p.getUniqueId()) == null) {
-            DailyQuests.getInstance().playerMap.put(p.getUniqueId(), QuestUtils.createQuestListForPlayer(DailyQuests.getInstance().getQuests()));
+            DailyQuests.getInstance().playerMap.put(p.getUniqueId(), QuestUtils.createQuestPlayer(p));
         }
     }
 

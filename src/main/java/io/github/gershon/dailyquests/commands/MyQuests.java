@@ -2,6 +2,7 @@ package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.quests.Quest;
+import io.github.gershon.dailyquests.utils.QuestUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -25,7 +26,8 @@ public class MyQuests {
 
                     if (src instanceof Player) {
                         Player player = (Player) src;
-                        List<Quest> quests = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
+                        List<Quest> allQuests = DailyQuests.getInstance().getQuests();
+                        List<Quest> quests = QuestUtils.getQuestsFromQuestPlayer(DailyQuests.getInstance().playerMap.get(player.getUniqueId()), allQuests);
                         if (quests == null || quests.isEmpty()) {
                             player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cYou have no quests!")));
                             return CommandResult.success();

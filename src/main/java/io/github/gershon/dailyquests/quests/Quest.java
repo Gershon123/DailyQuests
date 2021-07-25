@@ -2,6 +2,7 @@ package io.github.gershon.dailyquests.quests;
 
 import com.google.gson.annotations.Expose;
 import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
@@ -76,7 +77,7 @@ public abstract class Quest {
     public void completeQuest(Player player) {
         rewards.forEach(reward -> reward.giveReward());
         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aYou have completed the " + getTitle() + " quest!")));
-        List<Quest> quests = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
-        DailyQuests.getInstance().playerMap.put(player.getUniqueId(), QuestUtils.removeQuest(quests, getId()));
+        QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
+        questPlayer.getQuestProgressMap().remove(id);
     }
 }

@@ -5,6 +5,7 @@ import com.pixelmonmod.pixelmon.Pixelmon;
 import io.github.gershon.dailyquests.commands.BaseCommand;
 import io.github.gershon.dailyquests.config.Config;
 import io.github.gershon.dailyquests.listeners.*;
+import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.storage.QuestStorage;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -47,7 +48,8 @@ public class DailyQuests {
     public static final String AUTHOR = "Gershon";
     public static final String DESC = "Repeatable & one time quests";
 
-    public final Map<UUID, List<Quest>> playerMap = new HashMap<UUID, List<Quest>>();
+    public final Map<UUID, QuestPlayer> playerMap = new HashMap<UUID, QuestPlayer>();
+    public final Map<String, Quest> quests = new HashMap<String, Quest>();
     public final QuestStorage questStorage = new QuestStorage();
 
     @Inject
@@ -77,7 +79,6 @@ public class DailyQuests {
     private HashSet<UUID> toggle;
     private boolean foundEconomyPlugin = false;
     private ScriptEngine scriptEngine;
-    private ArrayList<Quest> quests = new ArrayList<Quest>();
 
     public static DailyQuests getInstance() {
         return instance;
@@ -87,7 +88,7 @@ public class DailyQuests {
     public void onServerStart(GameInitializationEvent e) {
         instance = this;
         configManager = HoconConfigurationLoader.builder().setPath(configDir.resolve("dailyquests.conf")).build();
-        questStorage.loadQuests(quests);
+        questStorage.loadQuests();
         Config.setup(configDir, configManager);
         logger.info("Registering listeners...");
         registerListeners();
@@ -108,7 +109,6 @@ public class DailyQuests {
             }
             logger.error("DailyQuests didn't found a valid economy plugin. Unloading...");
         }
-
     }
 
     @Listener
@@ -122,8 +122,8 @@ public class DailyQuests {
     }
 
     public void addQuest(Quest quest) {
-        DailyQuests.getInstance().getQuests().add(quest);
-        questStorage.storeQuests(quests);
+        quests.put(quest.getId(), quest);
+        questStorage.storeQuest(quest);
     }
 
     private void registerCommands() {
@@ -151,16 +151,30 @@ public class DailyQuests {
     }
 
     public ArrayList<Quest> getQuests() {
-        return quests;
+        ArrayList<Quest> questList = new ArrayList<>();
+        for (String key : quests.keySet()) {
+            questList.add(quests.get(key));
+        }
+        return questList;
     }
 
-    public void setQuests(ArrayList<Quest> quests) {
-        this.quests = quests;
+    public void setQuests(ArrayList<Quest> questList) {
+        if (questList == null) {
+            return;
+        }
+
+        questList.forEach(quest -> {
+            quests.put(quest.getId(), quest);
+        });
     }
 
     public void updateQuests(ArrayList<Quest> quests) {
-        this.quests = quests;
-        questStorage.storeQuests(quests);
+        if (quests != null) {
+            for (Quest quest : quests) {
+                this.quests.put(quest.getId(), quest);
+                questStorage.storeQuest(quest);
+            }
+        }
     }
 
     @Listener

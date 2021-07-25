@@ -1,5 +1,8 @@
 package io.github.gershon.dailyquests.utils;
 
+import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.player.QuestPlayer;
+import io.github.gershon.dailyquests.player.QuestProgress;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
@@ -8,11 +11,14 @@ import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskFactory;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -29,12 +35,18 @@ public class QuestUtils {
         return quests != null ? quests.stream().anyMatch(quest -> quest.getId().equals(id)) : false;
     }
 
-    public static ArrayList<Quest> createQuestListForPlayer(ArrayList<Quest> quests) {
+    public static QuestPlayer createQuestPlayer(User user) {
+        QuestPlayer questPlayer = new QuestPlayer(user.getUniqueId());
+        questPlayer.setQuestProgressMap(createQuestProgressesForPlayer(DailyQuests.getInstance().getQuests()));
+        return questPlayer;
+    }
+
+    public static Map<String, QuestProgress> createQuestProgressesForPlayer(ArrayList<Quest> quests) {
         if (quests == null) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
         if (quests.size() <= 3) {
-            return quests;
+            return getQuestProgressesFromQuests(quests);
         }
         ArrayList<Quest> randomQuests = new ArrayList<>();
         while (randomQuests.size() < 3) {
@@ -43,29 +55,38 @@ public class QuestUtils {
                 randomQuests.add(randomQuest);
             }
         }
-        return randomQuests;
+        return getQuestProgressesFromQuests(randomQuests);
+    }
+
+    public static Map<String, QuestProgress> getQuestProgressesFromQuests(ArrayList<Quest> quests) {
+        return quests != null
+                ? quests.stream().collect(Collectors.toMap(quest -> quest.getId(), quest -> getQuestProgressFromQuest(quest)))
+                : new HashMap<>();
+    }
+
+    public static QuestProgress getQuestProgressFromQuest(Quest quest) {
+        return new QuestProgress(quest.getId(), 0);
     }
 
     public static Quest getQuest(List<Quest> quests, String id) {
-        return quests.stream().filter(quest1 -> quest1.getId().equals(id)).findAny().orElse(null);
+        return quests != null
+                ? quests.stream().filter(quest1 -> quest1.getId().equals(id)).findAny().orElse(null)
+                : null;
     }
 
-    public static List<Quest> removeQuest(List<Quest> quests, String id) {
-        return quests.stream().filter(quest -> !quest.getId().equals(id)).collect(Collectors.toList());
+    public static List<Quest> getQuestsFromQuestPlayer(QuestPlayer questPlayer, List<Quest> quests) {
+        return quests.stream()
+                .filter(quest -> questPlayer.getQuestProgressMap().values().stream()
+                        .anyMatch(value -> value.getQuestId().equals(quest.getId()))
+                ).collect(Collectors.toList());
     }
 
-    public static List<Quest> getQuestsForTask(List<Quest> quests, TaskType taskType) {
-        return quests.stream().filter(quest -> quest.getTask().getTaskType().equals(taskType)).collect(Collectors.toList());
-    }
-
-    public static void handleQuestsTaskUpdate(List<Quest> quests, int amount, Player player) {
-        quests.forEach(quest -> {
-            quest.getTask().setCurrentAmount(quest.getTask().getCurrentAmount() + amount);
-            if (quest.getTask().getCurrentAmount() >= quest.getTask().getTotalAmount()) {
-                quest.getTask().completeTask(player);
-                quest.completeQuest(player);
-            }
-        });
+    public static void handleQuestTaskUpdate(Quest quest, QuestProgress questProgress, int amount, Player player) {
+        questProgress.setTaskAmount(questProgress.getTaskAmount() + amount);
+        if (questProgress.getTaskAmount() >= quest.getTask().getTotalAmount()) {
+            quest.getTask().completeTask(player);
+            quest.completeQuest(player);
+        }
     }
 
     private static Quest getRandomQuest(ArrayList<Quest> quests) {

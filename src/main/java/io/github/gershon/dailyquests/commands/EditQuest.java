@@ -40,7 +40,7 @@ public class EditQuest {
                         Player player = (Player) src;
                         String id = args.<String>getOne("id").get();
                         String cmdArgs = args.<String>getOne("args").get();
-                        Quest quest = QuestUtils.getQuest(DailyQuests.getInstance().getQuests(), id);
+                        Quest quest = DailyQuests.getInstance().quests.get(id);
                         if (quest == null) {
                             player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cUnable to find quest by id " + id)));
                             return CommandResult.success();

@@ -27,7 +27,7 @@ public class QuestStorage {
             .registerTypeAdapterFactory(taskTypeAdapterFactory)
             .create();
 
-    public void loadQuests(ArrayList<Quest> quests) {
+    public void loadQuests() {
         int questsLoaded = 0;
         try {
             File[] files = directory.listFiles();
@@ -36,7 +36,8 @@ public class QuestStorage {
                 if (file.isFile()) {
                     try {
                         String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-                        quests.add(gson.fromJson(content, Quest.class));
+                        Quest quest = gson.fromJson(content, Quest.class);
+                        DailyQuests.getInstance().quests.put(quest.getId(), quest);
                         questsLoaded++;
                     } catch (Exception e) {
                         DailyQuests.getInstance().getLogger().error("Failed to import " + file.getName());
@@ -50,16 +51,12 @@ public class QuestStorage {
         DailyQuests.getInstance().getLogger().info("Loaded " + questsLoaded + " quests");
     }
 
-    public void storeQuests(ArrayList<Quest> quests) {
-        if (quests != null) {
-            quests.forEach(quest -> {
-                // IMPORTANT - THIS SHOULD BE EXTENSIVELY TESTED TO MAKE SURE SAVING / LOADING WORKS CORRECTLY
-                String json = gson.toJson(quest, Quest.class);
-                String dir = directory.getPath() + "/";
-                String fileName = quest.getId() + ".json";
-                io.github.gershon.dailyquests.utils.FileUtils.writeToFile(dir, fileName, json);
-            });
-        }
+    public void storeQuest(Quest quest) {
+        // IMPORTANT - THIS SHOULD BE EXTENSIVELY TESTED TO MAKE SURE SAVING / LOADING WORKS CORRECTLY
+        String json = gson.toJson(quest, Quest.class);
+        String dir = directory.getPath() + "/";
+        String fileName = quest.getId() + ".json";
+        io.github.gershon.dailyquests.utils.FileUtils.writeToFile(dir, fileName, json);
     }
 
 }

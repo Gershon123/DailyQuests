@@ -6,13 +6,11 @@ public class Task {
     private String title;
     private transient TaskType taskType;
     private int totalAmount;
-    private int currentAmount;
 
     public Task(String title, TaskType taskType, int totalAmount) {
         this.title = title;
         this.taskType = taskType;
         this.totalAmount = totalAmount;
-        this.currentAmount = 0;
     }
 
     public Task(TaskType taskType) {
@@ -31,16 +29,8 @@ public class Task {
         return totalAmount;
     }
 
-    public int getCurrentAmount() {
-        return currentAmount;
-    }
-
     public void setTotalAmount(int totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    public void setCurrentAmount(int currentAmount) {
-        this.currentAmount = currentAmount;
     }
 
     public void completeTask(Player player) {
