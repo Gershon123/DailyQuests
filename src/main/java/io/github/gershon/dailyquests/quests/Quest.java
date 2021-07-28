@@ -3,6 +3,7 @@ package io.github.gershon.dailyquests.quests;
 import com.google.gson.annotations.Expose;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.player.QuestPlayer;
+import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
@@ -13,13 +14,14 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public abstract class Quest {
     private String id;
     private String title;
+    private String categoryId;
+    private Point point;
     private Task task;
     private ArrayList<Reward> rewards;
     private ItemType icon;
@@ -54,6 +56,14 @@ public abstract class Quest {
         return title;
     }
 
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
     public Task getTask() {
         return task;
     }
@@ -72,6 +82,10 @@ public abstract class Quest {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public void completeQuest(Player player) {

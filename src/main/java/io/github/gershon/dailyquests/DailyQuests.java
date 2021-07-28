@@ -7,6 +7,9 @@ import io.github.gershon.dailyquests.config.Config;
 import io.github.gershon.dailyquests.listeners.*;
 import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.quests.Quest;
+import io.github.gershon.dailyquests.quests.categories.Category;
+import io.github.gershon.dailyquests.storage.Database;
+import io.github.gershon.dailyquests.storage.QuestPlayerStorage;
 import io.github.gershon.dailyquests.storage.QuestStorage;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -27,11 +30,15 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
+import org.spongepowered.api.service.sql.SqlService;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.sql.DataSource;
 import java.io.File;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 @Plugin(name = DailyQuests.NAME,
@@ -49,6 +56,7 @@ public class DailyQuests {
     public static final String DESC = "Repeatable & one time quests";
 
     public final Map<UUID, QuestPlayer> playerMap = new HashMap<UUID, QuestPlayer>();
+    public final Map<String, Category> categories = new HashMap<String, Category>();
     public final Map<String, Quest> quests = new HashMap<String, Quest>();
     public final QuestStorage questStorage = new QuestStorage();
 
@@ -84,11 +92,37 @@ public class DailyQuests {
         return instance;
     }
 
+    private static QuestPlayerStorage questPlayerStorage;
+
+    public static QuestPlayerStorage getQuestPlayerStorage() {
+        return questPlayerStorage;
+    }
+
+    private String dbPath;
+    private DataSource dataSource;
+
+    public Connection getConnection() {
+        try {
+            return this.dataSource.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Listener
     public void onServerStart(GameInitializationEvent e) {
         instance = this;
         configManager = HoconConfigurationLoader.builder().setPath(configDir.resolve("dailyquests.conf")).build();
         questStorage.loadQuests();
+        questPlayerStorage = new QuestPlayerStorage();
+
+        try {
+            this.dbPath = String.format("jdbc:h2:%s/players.db;mode=MySQL", getDefConfig().getParentFile().getAbsolutePath());
+            this.dataSource = Sponge.getServiceManager().provide(SqlService.class).get().getDataSource(dbPath);
+        } catch (Exception exception) {
+            logger.error("Error loading plugin " + exception.getMessage());
+        }
         Config.setup(configDir, configManager);
         logger.info("Registering listeners...");
         registerListeners();
@@ -156,6 +190,14 @@ public class DailyQuests {
             questList.add(quests.get(key));
         }
         return questList;
+    }
+
+    public ArrayList<Category> getCategories() {
+        ArrayList<Category> categoryList = new ArrayList<>();
+        for (String key : categories.keySet()) {
+            categoryList.add(categories.get(key));
+        }
+        return categoryList;
     }
 
     public void setQuests(ArrayList<Quest> questList) {

@@ -80,6 +80,9 @@ public class EditQuest {
                 case "title":
                     quest.setTitle(properties.get("title"));
                     break;
+                case "category":
+                    quest.setCategoryId(properties.get("category"));
+                    break;
             }
         });
 

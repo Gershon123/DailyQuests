@@ -2,6 +2,7 @@ package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.quests.Quest;
+import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
 import io.github.gershon.dailyquests.utils.QuestUtils;
@@ -36,9 +37,12 @@ public class QuestInfo {
                             player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cUnable to find quest by id " + id)));
                             return CommandResult.success();
                         }
+                        Category category = DailyQuests.getInstance().categories.get(quest.getCategoryId());
+                        String categoryTitle = category != null ? category.getTitle() : "No category";
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&b" + quest.getTitle())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bID: " + quest.getId())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bType: " + quest.getQuestType())));
+                        player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bCategory: " + categoryTitle)));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTask Type: " + quest.getTask().getTaskType())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTask Title: " + quest.getTask().getTitle())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTask Amount: " + quest.getTask().getTotalAmount())));

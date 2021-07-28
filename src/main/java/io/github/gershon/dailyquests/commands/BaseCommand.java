@@ -12,6 +12,9 @@ public class BaseCommand {
             .child(new QuestInfo().getCommandSpec(), "info")
             .child(new MyQuests().getCommandSpec(), "myquests")
             .child(new EditQuest().getCommandSpec(), "edit")
+            .child(new GetQuest().getCommandSpec(), "get")
+            .child(new CreateCategory().getCommandSpec(), "createcategory")
+            .child(new OpenQuests().getCommandSpec(), "open")
             .build();
 
     public CommandSpec getCommandSpec() {
