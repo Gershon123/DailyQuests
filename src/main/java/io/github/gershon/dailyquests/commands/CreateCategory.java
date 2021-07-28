@@ -40,7 +40,7 @@ public class CreateCategory {
                             return CommandResult.success();
                         }
 
-                        DailyQuests.getInstance().categories.put(id, new Category(id, name));
+                        DailyQuests.getInstance().categoryStorage.saveCategory(new Category(id, name));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aCreated Category: " + name)));
 
                     }

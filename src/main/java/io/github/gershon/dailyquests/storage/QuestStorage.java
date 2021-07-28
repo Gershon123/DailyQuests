@@ -5,6 +5,9 @@ import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.adapters.RuntimeTypeAdapterFactory;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
+import io.github.gershon.dailyquests.quests.rewards.CommandReward;
+import io.github.gershon.dailyquests.quests.rewards.ItemReward;
+import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
 import org.apache.commons.io.FileUtils;
@@ -21,10 +24,15 @@ public class QuestStorage {
     private RuntimeTypeAdapterFactory<Task> taskTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Task.class, "taskType")
             .registerSubtype(HarvestApricornTask.class, "HARVEST_APRICORN");
+    private RuntimeTypeAdapterFactory<Reward> rewardTypeAdapterFactory = RuntimeTypeAdapterFactory
+            .of(Reward.class, "rewardType")
+            .registerSubtype(ItemReward.class, "ITEM")
+            .registerSubtype(CommandReward.class, "COMMAND");
     private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapterFactory(questTypeAdapterFactory)
             .registerTypeAdapterFactory(taskTypeAdapterFactory)
+            .registerTypeAdapterFactory(rewardTypeAdapterFactory)
             .create();
 
     public void loadQuests() {

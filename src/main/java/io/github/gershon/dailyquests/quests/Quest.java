@@ -7,12 +7,16 @@ import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
+import io.github.gershon.dailyquests.utils.CategoryUtils;
 import io.github.gershon.dailyquests.utils.QuestUtils;
+import io.github.gershon.dailyquests.utils.TextUtils;
 import net.minecraft.item.Item;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,10 +25,11 @@ public abstract class Quest {
     private String id;
     private String title;
     private String categoryId;
-    private Point point;
+    private int position;
     private Task task;
     private ArrayList<Reward> rewards;
-    private ItemType icon;
+    private ArrayList<Text> lore;
+    private String icon;
     private transient QuestType questType;
 
     public Quest(String id, String title, Task task, ArrayList<Reward> rewards, ItemType icon, QuestType questType) {
@@ -32,13 +37,25 @@ public abstract class Quest {
         this.rewards = rewards;
         this.task = task;
         this.title = title;
-        this.icon = icon;
+        try {
+            this.icon = icon.getId();
+        } catch (Exception e) {
+            this.icon = "minecraft:paper";
+        }
         this.questType = questType;
+        this.lore = new ArrayList<>();
+        try {
+            this.position = QuestUtils.getNextValidPosition(DailyQuests.getInstance().getQuests());
+        } catch (Exception e) {
+            this.position = 0;
+        }
     }
 
     public Quest(String id, QuestType questType) {
         this.id = id;
         this.questType = questType;
+        this.rewards = new ArrayList<>();
+        this.lore = new ArrayList<>();
     }
 
     public Quest(QuestType questType) {
@@ -60,8 +77,8 @@ public abstract class Quest {
         return categoryId;
     }
 
-    public Point getPoint() {
-        return point;
+    public int getPosition() {
+        return position;
     }
 
     public Task getTask() {
@@ -73,11 +90,15 @@ public abstract class Quest {
     }
 
     public ItemType getIcon() {
-        return icon;
+        return Sponge.getRegistry().getType(ItemType.class, icon).get();
     }
 
     public QuestType getQuestType() {
         return questType;
+    }
+
+    public ArrayList<Text> getLore() {
+        return lore;
     }
 
     public void setTitle(String title) {
@@ -88,9 +109,21 @@ public abstract class Quest {
         this.categoryId = categoryId;
     }
 
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public void setLore(ArrayList<Text> lore) {
+        this.lore = lore;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     public void completeQuest(Player player) {
-        rewards.forEach(reward -> reward.giveReward());
-        player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aYou have completed the " + getTitle() + " quest!")));
+        rewards.forEach(reward -> reward.giveReward(player));
+        player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " quest!"));
         QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
         questPlayer.getQuestProgressMap().remove(id);
     }

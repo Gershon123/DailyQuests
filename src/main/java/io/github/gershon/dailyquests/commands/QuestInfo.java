@@ -17,8 +17,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
-import java.util.List;
-
 public class QuestInfo {
 
     private CommandSpec commandSpec = CommandSpec.builder()
@@ -39,8 +37,8 @@ public class QuestInfo {
                         }
                         Category category = DailyQuests.getInstance().categories.get(quest.getCategoryId());
                         String categoryTitle = category != null ? category.getTitle() : "No category";
-                        player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&b" + quest.getTitle())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bID: " + quest.getId())));
+                        player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTitle" + quest.getTitle())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bType: " + quest.getQuestType())));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bCategory: " + categoryTitle)));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bTask Type: " + quest.getTask().getTaskType())));

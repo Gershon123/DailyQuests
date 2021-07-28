@@ -12,6 +12,8 @@ import io.github.gershon.dailyquests.quests.tasks.TaskFactory;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -26,9 +28,10 @@ public class QuestUtils {
 
     public static Quest createRepeatableQuest(String id, String title, TaskType taskType) {
         LocalDateTime time = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
+        ItemType itemType = ItemTypes.PAPER;
         ArrayList<Reward> rewards = new ArrayList<Reward>();
         Task task = TaskFactory.createTask(title, taskType, 1);
-        return new RepeatableQuest(id, title, task, rewards, null, QuestType.REPEATABLE, time);
+        return new RepeatableQuest(id, title, task, rewards, itemType, QuestType.REPEATABLE, time);
     }
 
     public static boolean questExists(String id, ArrayList<Quest> quests) {
@@ -79,6 +82,23 @@ public class QuestUtils {
                 .filter(quest -> questPlayer.getQuestProgressMap().values().stream()
                         .anyMatch(value -> value.getQuestId().equals(quest.getId()))
                 ).collect(Collectors.toList());
+    }
+
+    public static int getNextValidPosition(ArrayList<Quest> quests) {
+        int position = 0;
+
+        if (quests == null) {
+            return 0;
+        }
+
+        for (int x = 0; x < quests.size() - 1; x++) {
+            position++;
+            if (position != quests.get(x + 1).getPosition()) {
+                return position;
+            }
+        }
+
+        return position;
     }
 
     public static void handleQuestTaskUpdate(Quest quest, QuestProgress questProgress, int amount, Player player) {

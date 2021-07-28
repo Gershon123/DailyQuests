@@ -8,6 +8,7 @@ import io.github.gershon.dailyquests.listeners.*;
 import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.categories.Category;
+import io.github.gershon.dailyquests.storage.CategoryStorage;
 import io.github.gershon.dailyquests.storage.Database;
 import io.github.gershon.dailyquests.storage.QuestPlayerStorage;
 import io.github.gershon.dailyquests.storage.QuestStorage;
@@ -59,6 +60,7 @@ public class DailyQuests {
     public final Map<String, Category> categories = new HashMap<String, Category>();
     public final Map<String, Quest> quests = new HashMap<String, Quest>();
     public final QuestStorage questStorage = new QuestStorage();
+    public final CategoryStorage categoryStorage = new CategoryStorage();
 
     @Inject
     private Logger logger;
@@ -114,7 +116,7 @@ public class DailyQuests {
     public void onServerStart(GameInitializationEvent e) {
         instance = this;
         configManager = HoconConfigurationLoader.builder().setPath(configDir.resolve("dailyquests.conf")).build();
-        questStorage.loadQuests();
+        loadItems();
         questPlayerStorage = new QuestPlayerStorage();
 
         try {
@@ -132,6 +134,11 @@ public class DailyQuests {
         toggle = new HashSet<>();
         scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
 
+    }
+
+    public void loadItems() {
+        categoryStorage.loadCategories();
+        questStorage.loadQuests();
     }
 
     @Listener

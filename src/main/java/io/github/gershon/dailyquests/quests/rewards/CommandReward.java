@@ -1,9 +1,12 @@
 package io.github.gershon.dailyquests.quests.rewards;
 
+import org.spongepowered.api.entity.living.player.Player;
+
 public class CommandReward extends Reward {
 
     private String name;
     private String command;
+    private transient RewardType rewardType = RewardType.COMMAND;
 
     public CommandReward(String name, String command) {
         this.name = name;
@@ -21,7 +24,7 @@ public class CommandReward extends Reward {
     }
 
     @Override
-    public void giveReward() {
+    public void giveReward(Player player) {
 
     }
 }

@@ -15,6 +15,8 @@ public class BaseCommand {
             .child(new GetQuest().getCommandSpec(), "get")
             .child(new CreateCategory().getCommandSpec(), "createcategory")
             .child(new OpenQuests().getCommandSpec(), "open")
+            .child(new ReloadQuests().getCommandSpec(), "reload")
+            .child(new AddReward().getCommandSpec(), "addreward")
             .build();
 
     public CommandSpec getCommandSpec() {

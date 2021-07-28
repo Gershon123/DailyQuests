@@ -71,17 +71,18 @@ public class EditQuest {
         properties.keySet().forEach((key) -> {
             switch (key) {
                 case "amount":
-                    try {
-                        task.setTotalAmount(Integer.parseInt(properties.get("amount")));
-                    } catch (NumberFormatException ex) {
-                        player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cAmount " + properties.get("amount") + " is not a valid number.")));
-                    }
+                    task.setTotalAmount(parseNumber(properties.get("amount"), player));
                     break;
                 case "title":
                     quest.setTitle(properties.get("title"));
                     break;
                 case "category":
                     quest.setCategoryId(properties.get("category"));
+                    break;
+                case "icon":
+                    quest.setIcon(properties.get("icon"));
+                case "position":
+                    quest.setPosition(parseNumber(properties.get("position"), player));
                     break;
             }
         });
@@ -97,5 +98,15 @@ public class EditQuest {
                     apricornTask.setHarvestAny(Boolean.parseBoolean(properties.get("apricorn")));
                 }
         }
+    }
+
+    private int parseNumber(String input, Player player) {
+        int number = 0;
+        try {
+            number = Integer.parseInt(input);
+        } catch (NumberFormatException ex) {
+            player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cAmount " + input + " is not a valid number.")));
+        }
+        return number;
     }
 }
