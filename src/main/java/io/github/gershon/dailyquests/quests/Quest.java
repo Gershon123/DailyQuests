@@ -19,7 +19,11 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class Quest {
     private String id;
@@ -28,7 +32,7 @@ public abstract class Quest {
     private int position;
     private Task task;
     private ArrayList<Reward> rewards;
-    private ArrayList<Text> lore;
+    private ArrayList<String> lore;
     private String icon;
     private transient QuestType questType;
 
@@ -97,8 +101,8 @@ public abstract class Quest {
         return questType;
     }
 
-    public ArrayList<Text> getLore() {
-        return lore;
+    public List<Text> getLore() {
+        return lore.stream().map(lore -> TextUtils.getText(lore)).collect(Collectors.toList());
     }
 
     public void setTitle(String title) {
@@ -113,7 +117,7 @@ public abstract class Quest {
         this.position = position;
     }
 
-    public void setLore(ArrayList<Text> lore) {
+    public void setLore(ArrayList<String> lore) {
         this.lore = lore;
     }
 
@@ -125,6 +129,7 @@ public abstract class Quest {
         rewards.forEach(reward -> reward.giveReward(player));
         player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " quest!"));
         QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
-        questPlayer.getQuestProgressMap().remove(id);
+        questPlayer.getQuestProgressMap().get(id).setCompleted(true);
+        questPlayer.getQuestProgressMap().get(id).setCompletedTime(LocalDateTime.now());
     }
 }

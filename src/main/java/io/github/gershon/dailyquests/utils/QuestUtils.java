@@ -4,7 +4,6 @@ import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.player.QuestProgress;
 import io.github.gershon.dailyquests.quests.Quest;
-import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
@@ -15,8 +14,8 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +23,16 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import static java.time.temporal.ChronoUnit.HOURS;
+
 public class QuestUtils {
 
     public static Quest createRepeatableQuest(String id, String title, TaskType taskType) {
-        LocalDateTime time = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
+        Duration duration = Duration.of(1, HOURS);
         ItemType itemType = ItemTypes.PAPER;
         ArrayList<Reward> rewards = new ArrayList<Reward>();
         Task task = TaskFactory.createTask(title, taskType, 1);
-        return new RepeatableQuest(id, title, task, rewards, itemType, QuestType.REPEATABLE, time);
+        return new RepeatableQuest(id, title, task, rewards, itemType, duration);
     }
 
     public static boolean questExists(String id, ArrayList<Quest> quests) {
@@ -68,7 +69,7 @@ public class QuestUtils {
     }
 
     public static QuestProgress getQuestProgressFromQuest(Quest quest) {
-        return new QuestProgress(quest.getId(), 0);
+        return new QuestProgress(quest.getId(), 0, LocalDateTime.now());
     }
 
     public static Quest getQuest(List<Quest> quests, String id) {
@@ -101,9 +102,20 @@ public class QuestUtils {
         return position;
     }
 
+    public static void checkAndAddMissingQuests(QuestPlayer questPlayer, List<Quest> quests) {
+        if (quests == null) {
+            return;
+        }
+        quests.forEach(quest -> {
+            if (!questPlayer.getQuestProgressMap().containsKey(quest.getId())) {
+                questPlayer.getQuestProgressMap().put(quest.getId(), getQuestProgressFromQuest(quest));
+            }
+        });
+    }
+
     public static void handleQuestTaskUpdate(Quest quest, QuestProgress questProgress, int amount, Player player) {
         questProgress.setTaskAmount(questProgress.getTaskAmount() + amount);
-        if (questProgress.getTaskAmount() >= quest.getTask().getTotalAmount()) {
+        if (!questProgress.isCompleted() && questProgress.getTaskAmount() >= quest.getTask().getTotalAmount()) {
             quest.getTask().completeTask(player);
             quest.completeQuest(player);
         }

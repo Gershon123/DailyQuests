@@ -8,6 +8,9 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.util.HashMap;
 
 public class ReloadQuests {
 
@@ -17,7 +20,10 @@ public class ReloadQuests {
             .executor(new CommandExecutor() {
                 @Override
                 public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+                    DailyQuests.getInstance().quests = new HashMap<>();
+                    DailyQuests.getInstance().categories = new HashMap<>();
                     DailyQuests.getInstance().loadItems();
+                    src.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aQuests Reloaded!")));
                     return CommandResult.success();
                 }
             })

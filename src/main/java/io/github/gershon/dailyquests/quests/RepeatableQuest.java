@@ -1,15 +1,18 @@
 package io.github.gershon.dailyquests.quests;
 
+import io.github.gershon.dailyquests.player.QuestProgress;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import org.spongepowered.api.item.ItemType;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 public class RepeatableQuest extends Quest {
 
-    private LocalDateTime expiryTime;
+    private Duration frequency;
 
     public RepeatableQuest(
             String id,
@@ -17,11 +20,10 @@ public class RepeatableQuest extends Quest {
             Task task,
             ArrayList<Reward> rewards,
             ItemType icon,
-            QuestType questType,
-            LocalDateTime expiryTime
+            Duration frequency
     ) {
-        super(id, title, task, rewards, icon, questType);
-        this.expiryTime = expiryTime;
+        super(id, title, task, rewards, icon, QuestType.REPEATABLE);
+        this.frequency = frequency;
     }
 
     public RepeatableQuest() {
@@ -32,12 +34,31 @@ public class RepeatableQuest extends Quest {
         super(id, QuestType.REPEATABLE);
     }
 
-    public LocalDateTime getExpiryTime() {
-        return expiryTime;
+    public Duration getFrequency() {
+        return frequency;
     }
 
-    public boolean isExpired() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(expiryTime);
+    public void setTimeUnit(Duration frequency) {
+        this.frequency = frequency;
+    }
+
+    public long getCooldown(QuestProgress questProgress) {
+        long completedTime = questProgress.getCompletedTime().toInstant(ZoneOffset.UTC).toEpochMilli();
+        long currentTime = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
+        return (completedTime + frequency.toMillis()) - currentTime;
+    }
+
+    public Duration timeLeft(QuestProgress questProgress) {
+        LocalDateTime localDateTime = questProgress.getAcceptedTime();
+        LocalDateTime currentTime = LocalDateTime.now();
+        localDateTime.plus(frequency);
+        return Duration.between(localDateTime.toLocalTime(), currentTime.toLocalTime());
+    }
+
+    public boolean hasExpired(QuestProgress questProgress) {
+        LocalDateTime localDateTime = questProgress.getAcceptedTime();
+        LocalDateTime currentTime = LocalDateTime.now();
+        localDateTime.plus(frequency);
+        return localDateTime.isAfter(currentTime);
     }
 }

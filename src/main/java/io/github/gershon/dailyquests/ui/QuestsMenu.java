@@ -6,12 +6,16 @@ import com.mcsimonflash.sponge.teslalibs.inventory.Layout;
 import com.mcsimonflash.sponge.teslalibs.inventory.View;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.player.QuestPlayer;
+import io.github.gershon.dailyquests.player.QuestProgress;
 import io.github.gershon.dailyquests.quests.Quest;
+import io.github.gershon.dailyquests.quests.QuestType;
+import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.utils.CategoryUtils;
+import io.github.gershon.dailyquests.utils.QuestUtils;
 import io.github.gershon.dailyquests.utils.TextUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
@@ -22,6 +26,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -82,25 +87,52 @@ public class QuestsMenu {
         view.setElement(0, Element.of(backButton, back));
 
         ArrayList<Quest> quests = CategoryUtils.getQuestsInCategory(category, DailyQuests.getInstance().getQuests());
+        QuestUtils.checkAndAddMissingQuests(questPlayer, quests);
         if (quests != null) {
             for (Quest quest : quests) {
+                QuestProgress questProgress = questPlayer.getQuestProgressMap().get(quest.getId());
                 ArrayList<Text> loreList = new ArrayList<>();
+                ItemStack itemStack = ItemStack.of(quest.getIcon(), 1);
+
+                quest.getLore().forEach(lore -> {
+                    loreList.add(lore);
+                });
+
                 loreList.add(Text.of(""));
                 loreList.add(TextUtils.progressBar(
-                        questPlayer.getQuestProgressMap().get(quest.getId()).getTaskAmount(),
+                        questProgress.getTaskAmount(),
                         quest.getTask().getTotalAmount(),
                         TextUtils.getQuestProgress(quest, questPlayer)));
-                loreList.add(Text.of(""));
-                loreList.add(TextUtils.getText("&bRewards:"));
-                quest.getRewards().forEach(reward -> {
-                    loreList.add(TextUtils.getText("&b- " + reward.getName()));
-                });
-                ItemStack itemStack = ItemStack.of(quest.getIcon(), 1);
-                itemStack.offer(Keys.DISPLAY_NAME, TextUtils.getText(quest.getTitle()));
-                itemStack.offer(Keys.ITEM_LORE, loreList);
+                if (questPlayer.getQuestProgressMap().get(quest.getId()).isCompleted()) {
+                    loreList.add(Text.of(""));
+                    loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
+                } else {
+                    loreList.add(Text.of(""));
+                    loreList.add(TextUtils.getText("&bRewards:"));
+                    quest.getRewards().forEach(reward -> {
+                        loreList.add(TextUtils.getText("&b- " + reward.getName()));
+                    });
+                }
 
+                if (quest.getQuestType() == QuestType.REPEATABLE) {
+                    if (questProgress.isCompleted()) {
+                        RepeatableQuest repeatableQuest = (RepeatableQuest) quest;
+                        Long cooldown = repeatableQuest.getCooldown(questProgress);
+                        itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
+                        loreList.add(TextUtils.getText(
+                                "&cCooldown: "
+                                        + DurationFormatUtils.formatDuration(Math.max(cooldown, 0), "H:mm:ss", true)));
+                    }
+                }
+
+                setItemStack(itemStack, quest, loreList);
                 view.setElement(quest.getPosition() + 9, Element.of(itemStack));
             }
         }
+    }
+
+    private static void setItemStack(ItemStack itemStack, Quest quest, ArrayList<Text> loreList) {
+        itemStack.offer(Keys.DISPLAY_NAME, TextUtils.getText(quest.getTitle()));
+        itemStack.offer(Keys.ITEM_LORE, loreList);
     }
 }

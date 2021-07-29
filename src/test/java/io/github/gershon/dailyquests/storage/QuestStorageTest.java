@@ -24,7 +24,7 @@ class QuestStorageTest {
 
     @Test
     void storeQuests() {
-        //questStorage.storeQuests(quests);
+
     }
 
 }

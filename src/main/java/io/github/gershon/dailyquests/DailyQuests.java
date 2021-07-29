@@ -9,7 +9,6 @@ import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.storage.CategoryStorage;
-import io.github.gershon.dailyquests.storage.Database;
 import io.github.gershon.dailyquests.storage.QuestPlayerStorage;
 import io.github.gershon.dailyquests.storage.QuestStorage;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -30,6 +29,7 @@ import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.sql.SqlService;
 
@@ -41,6 +41,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(name = DailyQuests.NAME,
         id = DailyQuests.ID,
@@ -57,8 +58,8 @@ public class DailyQuests {
     public static final String DESC = "Repeatable & one time quests";
 
     public final Map<UUID, QuestPlayer> playerMap = new HashMap<UUID, QuestPlayer>();
-    public final Map<String, Category> categories = new HashMap<String, Category>();
-    public final Map<String, Quest> quests = new HashMap<String, Quest>();
+    public Map<String, Category> categories = new HashMap<String, Category>();
+    public Map<String, Quest> quests = new HashMap<String, Quest>();
     public final QuestStorage questStorage = new QuestStorage();
     public final CategoryStorage categoryStorage = new CategoryStorage();
 
@@ -149,7 +150,10 @@ public class DailyQuests {
                 Sponge.getCommandManager().removeMapping(commandMapping);
             }
             logger.error("DailyQuests didn't found a valid economy plugin. Unloading...");
+        } else {
+            updateQuestPlayers();
         }
+
     }
 
     @Listener
@@ -224,6 +228,14 @@ public class DailyQuests {
                 questStorage.storeQuest(quest);
             }
         }
+    }
+
+    public void updateQuestPlayers() {
+        Task.builder().execute(() -> {
+            for (QuestPlayer questPlayer : playerMap.values()) {
+                questPlayer.update();
+            }
+        }).async().interval(60L, TimeUnit.SECONDS).submit(DailyQuests.getInstance());
     }
 
     @Listener

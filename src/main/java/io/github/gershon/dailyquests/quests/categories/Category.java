@@ -14,6 +14,7 @@ public class Category {
     private String itemType;
     private int position;
     private ArrayList<String> lore;
+    private transient CategoryType categoryType = CategoryType.NORMAL;
 
     public Category(String id, String title) {
         this.id = id;
@@ -41,6 +42,10 @@ public class Category {
 
     public ItemType itemType() {
         return Sponge.getRegistry().getType(ItemType.class, itemType).get();
+    }
+
+    public CategoryType getCategoryType() {
+        return categoryType;
     }
 
     public ArrayList<String> getLore() {

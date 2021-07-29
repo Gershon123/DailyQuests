@@ -6,6 +6,7 @@ import io.github.gershon.dailyquests.player.QuestProgress;
 import org.spongepowered.api.scheduler.Task;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Database {
@@ -87,7 +88,7 @@ public class Database {
                 questPlayer.setQuestsCompleted(results.getInt("questsCompleted"));
                 String questId = results.getString("questId");
                 int amount = results.getInt("taskAmount");
-                questPlayer.getQuestProgressMap().put(questId, new QuestProgress(questId, amount));
+                questPlayer.getQuestProgressMap().put(questId, new QuestProgress(questId, amount, LocalDateTime.now()));
 
             }
             if (questPlayer != null) {
