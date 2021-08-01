@@ -3,12 +3,17 @@ package io.github.gershon.dailyquests.storage;
 import com.google.gson.*;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.adapters.RuntimeTypeAdapterFactory;
+import io.github.gershon.dailyquests.quests.OneTimeQuest;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.rewards.CommandReward;
 import io.github.gershon.dailyquests.quests.rewards.ItemReward;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
+import io.github.gershon.dailyquests.quests.tasks.TaskType;
+import io.github.gershon.dailyquests.quests.tasks.impl.BattlePokemonTask;
+import io.github.gershon.dailyquests.quests.tasks.impl.CapturePokemonTask;
+import io.github.gershon.dailyquests.quests.tasks.impl.CraftItemTask;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
 import org.apache.commons.io.FileUtils;
 
@@ -20,10 +25,14 @@ public class QuestStorage {
     private final File directory = new File("config/" + DailyQuests.ID + "/quests/");
     private RuntimeTypeAdapterFactory<Quest> questTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Quest.class, "questType")
-            .registerSubtype(RepeatableQuest.class, "REPEATABLE");
+            .registerSubtype(RepeatableQuest.class, "REPEATABLE")
+            .registerSubtype(OneTimeQuest.class, "ONE_TIME");
     private RuntimeTypeAdapterFactory<Task> taskTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Task.class, "taskType")
-            .registerSubtype(HarvestApricornTask.class, "HARVEST_APRICORN");
+            .registerSubtype(HarvestApricornTask.class, "HARVEST_APRICORN")
+            .registerSubtype(BattlePokemonTask.class, "DEFEAT_POKEMON")
+            .registerSubtype(CraftItemTask.class, "CRAFT_ITEM")
+            .registerSubtype(CapturePokemonTask.class, "CATCH_POKEMON");
     private RuntimeTypeAdapterFactory<Reward> rewardTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Reward.class, "rewardType")
             .registerSubtype(ItemReward.class, "ITEM")

@@ -27,6 +27,7 @@ public class QuestPlayerStorage {
         try {
             String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             questPlayer = gson.fromJson(content, QuestPlayer.class);
+            questPlayer.update();
             DailyQuests.getInstance().playerMap.put(questPlayer.getPlayerId(), questPlayer);
         } catch (Exception e) {
             DailyQuests.getInstance().getLogger().error("Failed to import " + file.getName());

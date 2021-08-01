@@ -47,18 +47,4 @@ public class RepeatableQuest extends Quest {
         long currentTime = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
         return (completedTime + frequency.toMillis()) - currentTime;
     }
-
-    public Duration timeLeft(QuestProgress questProgress) {
-        LocalDateTime localDateTime = questProgress.getAcceptedTime();
-        LocalDateTime currentTime = LocalDateTime.now();
-        localDateTime.plus(frequency);
-        return Duration.between(localDateTime.toLocalTime(), currentTime.toLocalTime());
-    }
-
-    public boolean hasExpired(QuestProgress questProgress) {
-        LocalDateTime localDateTime = questProgress.getAcceptedTime();
-        LocalDateTime currentTime = LocalDateTime.now();
-        localDateTime.plus(frequency);
-        return localDateTime.isAfter(currentTime);
-    }
 }

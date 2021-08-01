@@ -1,7 +1,7 @@
 package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
-import io.github.gershon.dailyquests.config.Config;
+import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.utils.QuestUtils;
 import io.github.gershon.dailyquests.utils.TaskUtils;
@@ -14,7 +14,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 public class CreateQuest {
@@ -25,6 +24,7 @@ public class CreateQuest {
             .arguments(
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("id"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("questname"))),
+                    GenericArguments.onlyOne(GenericArguments.string(Text.of("type"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("task")))
             )
             .executor(new CommandExecutor() {
@@ -35,10 +35,16 @@ public class CreateQuest {
                         Player player = (Player) src;
                         String id = args.<String>getOne("id").get();
                         String name = args.<String>getOne("questname").get();
+                        String type = args.<String>getOne("type").get();
                         String task = args.<String>getOne("task").get();
 
                         if (QuestUtils.questExists(id, DailyQuests.getInstance().getQuests())) {
                             player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cQuest with ID " + id + " already exists")));
+                            return CommandResult.success();
+                        }
+
+                        if (!QuestType.isValidQuestType(type)) {
+                            player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&cNot a valid quest type")));
                             return CommandResult.success();
                         }
 
@@ -48,7 +54,8 @@ public class CreateQuest {
                         }
 
                         TaskType taskType = TaskType.valueOf(task);
-                        DailyQuests.getInstance().addQuest(QuestUtils.createRepeatableQuest(id, name, taskType));
+                        QuestType questType = QuestType.valueOf(type);
+                        DailyQuests.getInstance().addQuest(QuestUtils.createQuest(id, name, questType, taskType));
                         player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&aCreated Quest: " + name)));
 
                     }

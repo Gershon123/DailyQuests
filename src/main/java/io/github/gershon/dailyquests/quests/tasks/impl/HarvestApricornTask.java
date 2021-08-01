@@ -15,8 +15,8 @@ public class HarvestApricornTask extends Task {
     private EnumApricorns apricorn;
     private boolean harvestAny;
 
-    public HarvestApricornTask(String title, TaskType taskType, int amount) {
-        super(title, taskType, amount);
+    public HarvestApricornTask(String title, int amount) {
+        super(title, TaskType.HARVEST_APRICORN, amount);
         apricorn = EnumApricorns.Black;
     }
 

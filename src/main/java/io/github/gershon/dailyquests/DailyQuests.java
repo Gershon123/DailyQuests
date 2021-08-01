@@ -158,6 +158,13 @@ public class DailyQuests {
 
     @Listener
     public void onServerClose(GameStoppingServerEvent e) {
+        logger.info("Saving all players.");
+        Sponge.getServer().getOnlinePlayers().forEach(player -> {
+            QuestPlayer questPlayer = playerMap.get(player.getUniqueId());
+            if (questPlayer != null) {
+                questPlayerStorage.savePlayer(questPlayer);
+            }
+        });
         logger.info("Plugin stopped.");
     }
 
@@ -177,7 +184,7 @@ public class DailyQuests {
 
     private void registerListeners() {
         game.getEventManager().registerListeners(this, new PlayerJoinListener());
-        Pixelmon.EVENT_BUS.register(new BeatTrainerListener());
+        game.getEventManager().registerListeners(this, new CraftItemListener());
         Pixelmon.EVENT_BUS.register(new BeatWildPixelmonListener());
         Pixelmon.EVENT_BUS.register(new CaptureListener());
         Pixelmon.EVENT_BUS.register(new HarvestApricornListener());

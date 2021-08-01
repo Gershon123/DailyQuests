@@ -4,7 +4,7 @@ import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
-import io.github.gershon.dailyquests.utils.QuestUtils;
+import io.github.gershon.dailyquests.utils.QuestPlayerUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class QuestPlayer {
             if (quest.getQuestType() == QuestType.REPEATABLE && questProgress.isCompleted()) {
                 RepeatableQuest repeatableQuest = (RepeatableQuest) quest;
                 if (repeatableQuest.getCooldown(questProgress) <= 0) {
-                    questProgressMap.put(key, QuestUtils.getQuestProgressFromQuest(quest));
+                    questProgressMap.put(key, QuestPlayerUtils.getQuestProgressFromQuest(quest));
                 }
             }
         }

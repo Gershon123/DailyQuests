@@ -1,15 +1,16 @@
 package io.github.gershon.dailyquests.commands;
 
 import com.google.common.base.Splitter;
+import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import com.pixelmonmod.pixelmon.enums.items.EnumApricorns;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
-import io.github.gershon.dailyquests.quests.tasks.TaskType;
+import io.github.gershon.dailyquests.quests.tasks.impl.CapturePokemonTask;
+import io.github.gershon.dailyquests.quests.tasks.impl.CraftItemTask;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
-import io.github.gershon.dailyquests.utils.QuestUtils;
-import io.github.gershon.dailyquests.utils.TaskUtils;
 import io.github.gershon.dailyquests.validation.ApricornValidation;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -18,10 +19,14 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class EditQuest {
 
@@ -90,13 +95,35 @@ public class EditQuest {
 
         switch (quest.getTask().getTaskType()) {
             case HARVEST_APRICORN:
-                HarvestApricornTask apricornTask = (HarvestApricornTask) task;
+                final HarvestApricornTask apricornTask = (HarvestApricornTask) task;
                 if (ApricornValidation.isValidApricorn(properties.get("apricorn"))) {
                     apricornTask.setApricorn(EnumApricorns.valueOf(properties.get("apricorn")));
                 }
-                if (properties.get("harvestany") != null) {
-                    apricornTask.setHarvestAny(Boolean.parseBoolean(properties.get("apricorn")));
+                if (properties.get("any") != null) {
+                    apricornTask.setHarvestAny(Boolean.parseBoolean(properties.get("any")));
                 }
+                break;
+            case CATCH_POKEMON:
+                final CapturePokemonTask capturePokemonTask = (CapturePokemonTask) task;
+                if (EnumSpecies.hasPokemon(properties.get("pokemon"))) {
+                    capturePokemonTask.setSpecies(EnumSpecies.valueOf(properties.get("pokemon")));
+                }
+                if (properties.get("any") != null) {
+                    capturePokemonTask.setAny(Boolean.parseBoolean(properties.get("any")));
+                }
+                break;
+            case CRAFT_ITEM:
+                CraftItemTask craftItemTask = (CraftItemTask) task;
+                if (properties.get("item") != null) {
+                    final Optional<ItemType> itemType = Sponge.getRegistry().getType(ItemType.class, properties.get("item"));
+                    if (itemType != null && itemType.isPresent()) {
+                        craftItemTask.setItemType(itemType.get().getId());
+                    }
+                }
+                if (properties.get("any") != null) {
+                    craftItemTask.setAny(Boolean.parseBoolean(properties.get("any")));
+                }
+                break;
         }
     }
 

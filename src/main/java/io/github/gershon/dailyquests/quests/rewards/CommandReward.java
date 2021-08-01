@@ -1,5 +1,6 @@
 package io.github.gershon.dailyquests.quests.rewards;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 
 public class CommandReward extends Reward {
@@ -25,6 +26,8 @@ public class CommandReward extends Reward {
 
     @Override
     public void giveReward(Player player) {
-
+        Sponge.getCommandManager().process(
+                Sponge.getServer().getConsole(), this.command.replaceAll("%player%", player.getName())
+        );
     }
 }

@@ -12,7 +12,7 @@ import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.utils.CategoryUtils;
-import io.github.gershon.dailyquests.utils.QuestUtils;
+import io.github.gershon.dailyquests.utils.QuestPlayerUtils;
 import io.github.gershon.dailyquests.utils.TextUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.data.key.Keys;
@@ -26,7 +26,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -69,6 +68,24 @@ public class QuestsMenu {
     public static void openCategory(Player player, Category category) {
         QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
         PluginContainer container = DailyQuests.getInstance().getPluginContainer();
+        questPlayer.update();
+        View view = getCategoryView(player, category, container);
+        ArrayList<Quest> quests = CategoryUtils.getQuestsInCategory(category, DailyQuests.getInstance().getQuests());
+        QuestPlayerUtils.checkAndAddMissingQuests(questPlayer, quests);
+        if (quests != null) {
+            for (Quest quest : quests) {
+                QuestProgress questProgress = questPlayer.getQuestProgressMap().get(quest.getId());
+                ArrayList<Text> loreList = new ArrayList<>();
+                ItemStack itemStack = ItemStack.of(quest.getIcon(), 1);
+                itemStack = getItemStack(questPlayer, quest, questProgress, loreList, itemStack);
+
+                view.setElement(quest.getPosition() + 9, Element.of(itemStack));
+            }
+        }
+    }
+
+
+    private static View getCategoryView(Player player, Category category, PluginContainer container) {
         Layout layout = Layout.builder().dimension(InventoryDimension.of(9, 3)).build();
 
         View view = View.builder()
@@ -85,50 +102,42 @@ public class QuestsMenu {
             openMenu(player);
         }).submit(DailyQuests.getInstance());
         view.setElement(0, Element.of(backButton, back));
+        return view;
+    }
 
-        ArrayList<Quest> quests = CategoryUtils.getQuestsInCategory(category, DailyQuests.getInstance().getQuests());
-        QuestUtils.checkAndAddMissingQuests(questPlayer, quests);
-        if (quests != null) {
-            for (Quest quest : quests) {
-                QuestProgress questProgress = questPlayer.getQuestProgressMap().get(quest.getId());
-                ArrayList<Text> loreList = new ArrayList<>();
-                ItemStack itemStack = ItemStack.of(quest.getIcon(), 1);
+    private static ItemStack getItemStack(QuestPlayer questPlayer, Quest quest, QuestProgress questProgress, ArrayList<Text> loreList, ItemStack itemStack) {
+        quest.getLore().forEach(lore -> {
+            loreList.add(lore);
+        });
 
-                quest.getLore().forEach(lore -> {
-                    loreList.add(lore);
-                });
+        loreList.add(Text.of(""));
+        loreList.add(TextUtils.progressBar(
+                questProgress.getTaskAmount(),
+                quest.getTask().getTotalAmount(),
+                TextUtils.getQuestProgress(quest, questPlayer)));
+        if (questPlayer.getQuestProgressMap().get(quest.getId()).isCompleted()) {
+            itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
+            loreList.add(Text.of(""));
+            loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
+        } else {
+            loreList.add(Text.of(""));
+            loreList.add(TextUtils.getText("&bRewards:"));
+            quest.getRewards().forEach(reward -> {
+                loreList.add(TextUtils.getText("&b- " + reward.getName()));
+            });
+        }
 
-                loreList.add(Text.of(""));
-                loreList.add(TextUtils.progressBar(
-                        questProgress.getTaskAmount(),
-                        quest.getTask().getTotalAmount(),
-                        TextUtils.getQuestProgress(quest, questPlayer)));
-                if (questPlayer.getQuestProgressMap().get(quest.getId()).isCompleted()) {
-                    loreList.add(Text.of(""));
-                    loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
-                } else {
-                    loreList.add(Text.of(""));
-                    loreList.add(TextUtils.getText("&bRewards:"));
-                    quest.getRewards().forEach(reward -> {
-                        loreList.add(TextUtils.getText("&b- " + reward.getName()));
-                    });
-                }
-
-                if (quest.getQuestType() == QuestType.REPEATABLE) {
-                    if (questProgress.isCompleted()) {
-                        RepeatableQuest repeatableQuest = (RepeatableQuest) quest;
-                        Long cooldown = repeatableQuest.getCooldown(questProgress);
-                        itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
-                        loreList.add(TextUtils.getText(
-                                "&cCooldown: "
-                                        + DurationFormatUtils.formatDuration(Math.max(cooldown, 0), "H:mm:ss", true)));
-                    }
-                }
-
-                setItemStack(itemStack, quest, loreList);
-                view.setElement(quest.getPosition() + 9, Element.of(itemStack));
+        if (quest.getQuestType() == QuestType.REPEATABLE) {
+            if (questProgress.isCompleted()) {
+                RepeatableQuest repeatableQuest = (RepeatableQuest) quest;
+                Long cooldown = repeatableQuest.getCooldown(questProgress);
+                loreList.add(TextUtils.getText(
+                        "&cCooldown: "
+                                + DurationFormatUtils.formatDuration(Math.max(cooldown, 0), "H:mm:ss", true)));
             }
         }
+        setItemStack(itemStack, quest, loreList);
+        return itemStack;
     }
 
     private static void setItemStack(ItemStack itemStack, Quest quest, ArrayList<Text> loreList) {

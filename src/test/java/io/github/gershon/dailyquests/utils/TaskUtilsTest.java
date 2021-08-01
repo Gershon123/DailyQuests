@@ -1,3 +1,5 @@
+package io.github.gershon.dailyquests.utils;
+
 import io.github.gershon.dailyquests.utils.TaskUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

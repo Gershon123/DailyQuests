@@ -2,10 +2,10 @@ package io.github.gershon.dailyquests.quests.tasks;
 
 import org.spongepowered.api.entity.living.player.Player;
 
-public class Task {
+public abstract class Task {
     private String title;
-    private transient TaskType taskType;
     private int totalAmount;
+    private transient TaskType taskType;
 
     public Task(String title, TaskType taskType, int totalAmount) {
         this.title = title;
@@ -35,4 +35,5 @@ public class Task {
 
     public void completeTask(Player player) {
     }
+
 }

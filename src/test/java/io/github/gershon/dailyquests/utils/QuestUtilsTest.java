@@ -1,7 +1,7 @@
-import io.github.gershon.dailyquests.player.QuestProgress;
+package io.github.gershon.dailyquests.utils;
+
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
-import io.github.gershon.dailyquests.utils.QuestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,17 +29,17 @@ class QuestUtilsTest {
 
     @Test
     void createQuestProgressesForPlayer() {
-        Assertions.assertEquals(QuestUtils.getQuestProgressesFromQuests(this.quests).get("123").getQuestId(), "123");
-        Assertions.assertNotNull(QuestUtils.getQuestProgressesFromQuests(null));
-        Assertions.assertEquals(QuestUtils.getQuestProgressesFromQuests(null).keySet().size(), 0);
+        Assertions.assertEquals(QuestPlayerUtils.getQuestProgressesFromQuests(this.quests).get("123").getQuestId(), "123");
+        Assertions.assertNotNull(QuestPlayerUtils.getQuestProgressesFromQuests(null));
+        Assertions.assertEquals(QuestPlayerUtils.getQuestProgressesFromQuests(null).keySet().size(), 0);
         quests.add(new RepeatableQuest("new quest 1"));
         quests.add(new RepeatableQuest("new quest 2"));
         quests.add(new RepeatableQuest("new quest 3"));
-        Assertions.assertNotNull(QuestUtils.getQuestProgressesFromQuests(this.quests));
-        Assertions.assertEquals(QuestUtils.getQuestProgressesFromQuests(this.quests).get("new quest 1").getQuestId(), "new quest 1");
-        Assertions.assertEquals(QuestUtils.getQuestProgressesFromQuests(this.quests).get("new quest 2").getQuestId(), "new quest 2");
-        Assertions.assertEquals(QuestUtils.getQuestProgressesFromQuests(this.quests).get("new quest 3").getQuestId(), "new quest 3");
-        Assertions.assertEquals(QuestUtils.getQuestProgressesFromQuests(this.quests).size(), 4);
+        Assertions.assertNotNull(QuestPlayerUtils.getQuestProgressesFromQuests(this.quests));
+        Assertions.assertEquals(QuestPlayerUtils.getQuestProgressesFromQuests(this.quests).get("new quest 1").getQuestId(), "new quest 1");
+        Assertions.assertEquals(QuestPlayerUtils.getQuestProgressesFromQuests(this.quests).get("new quest 2").getQuestId(), "new quest 2");
+        Assertions.assertEquals(QuestPlayerUtils.getQuestProgressesFromQuests(this.quests).get("new quest 3").getQuestId(), "new quest 3");
+        Assertions.assertEquals(QuestPlayerUtils.getQuestProgressesFromQuests(this.quests).size(), 4);
     }
 
     @Test
@@ -52,5 +52,19 @@ class QuestUtilsTest {
         Assertions.assertEquals(QuestUtils.getQuest(this.quests, "new quest 1").getId(), "new quest 1");
         Assertions.assertEquals(QuestUtils.getQuest(this.quests, "new quest 2").getId(), "new quest 2");
         Assertions.assertEquals(QuestUtils.getQuest(this.quests, "new quest 3").getId(), "new quest 3");
+    }
+
+    @Test
+    void getNextValidPosition() {
+        Assertions.assertEquals(QuestUtils.getNextValidPosition(this.quests), 1);
+        quests.add(getQuestAtPosition(1));
+        quests.add(getQuestAtPosition(3));
+        Assertions.assertEquals(QuestUtils.getNextValidPosition(this.quests), 2);
+    }
+
+    private static Quest getQuestAtPosition(int position) {
+        Quest quest = new RepeatableQuest("new quest  " + position);
+        quest.setPosition(position);
+        return quest;
     }
 }
