@@ -1,6 +1,7 @@
 package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.config.Permissions;
 import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.utils.QuestUtils;
@@ -20,7 +21,7 @@ public class CreateQuest {
 
     private CommandSpec commandSpec = CommandSpec.builder()
             .description(Text.of("Creates a quest"))
-            .permission("DailyQuests.command.create")
+            .permission(Permissions.CREATE_QUESTS)
             .arguments(
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("id"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("questname"))),

@@ -5,6 +5,7 @@ package io.github.gershon.dailyquests.quests.tasks;
 public enum TaskType {
     HARVEST_APRICORN,
     CATCH_POKEMON,
+    HATCH_POKEMON,
     DEFEAT_POKEMON,
     DEFEAT_TRAINER,
     BREAK_BLOCK,

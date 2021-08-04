@@ -33,12 +33,13 @@ public class QuestsMenu {
 
     public static void openMenu(Player player) {
         PluginContainer container = DailyQuests.getInstance().getPluginContainer();
+        QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
         View view = View.builder()
-                .archetype(InventoryArchetypes.DOUBLE_CHEST)
+                .archetype(InventoryArchetypes.CHEST)
                 .property(InventoryTitle.of(TextUtils.getText("&e&lCategories")))
                 .build(container)
                 .define(Layout.builder()
-                        .dimension(InventoryDimension.of(9, 3))
+                        .dimension(InventoryDimension.of(9, 2))
                         .build());
 
         view.open(player);
@@ -47,11 +48,29 @@ public class QuestsMenu {
         if (categories != null) {
             for (Category category : categories) {
                 ArrayList<Text> loreList = new ArrayList<>();
+                category.getLore().forEach(lore -> {
+                    loreList.add(lore);
+                });
                 ArrayList<Quest> quests = CategoryUtils.getQuestsInCategory(category, DailyQuests.getInstance().getQuests());
+                QuestPlayerUtils.checkAndAddMissingQuests(questPlayer, quests);
                 loreList.add(Text.of(""));
                 loreList.add(TextUtils.getText("&7" + quests.size() + " Quests in total"));
+                int completedQuests = 0;
+                int availableQuests = 0;
+                int cooldownQuests = 0;
+                for (Quest quest : quests) {
+                    if (quest.getQuestType() == QuestType.ONE_TIME && questPlayer.questIsComplete(quest.getId()))
+                        completedQuests++;
+                    else if (quest.getQuestType() == QuestType.REPEATABLE && questPlayer.questIsComplete(quest.getId()))
+                        cooldownQuests++;
+                    else if (!questPlayer.questIsComplete(quest.getId()))
+                        availableQuests++;
+                }
+                loreList.add(TextUtils.getText("&a" + completedQuests + " Completed Quests"));
+                loreList.add(TextUtils.getText("&b" + availableQuests + " Available Quests"));
+                loreList.add(TextUtils.getText("&e" + cooldownQuests + " Quests are on cooldown"));
                 ItemStack itemStack = ItemStack.of(category.itemType(), 1);
-                itemStack.offer(Keys.DISPLAY_NAME, Text.of(category.getTitle()));
+                itemStack.offer(Keys.DISPLAY_NAME, TextUtils.getText(category.getTitle()));
                 itemStack.offer(Keys.ITEM_LORE, loreList);
 
                 Consumer<Action.Click> clickCategory = click -> Task.builder().execute(task -> {
@@ -71,7 +90,6 @@ public class QuestsMenu {
         questPlayer.update();
         View view = getCategoryView(player, category, container);
         ArrayList<Quest> quests = CategoryUtils.getQuestsInCategory(category, DailyQuests.getInstance().getQuests());
-        QuestPlayerUtils.checkAndAddMissingQuests(questPlayer, quests);
         if (quests != null) {
             for (Quest quest : quests) {
                 QuestProgress questProgress = questPlayer.getQuestProgressMap().get(quest.getId());
@@ -86,10 +104,10 @@ public class QuestsMenu {
 
 
     private static View getCategoryView(Player player, Category category, PluginContainer container) {
-        Layout layout = Layout.builder().dimension(InventoryDimension.of(9, 3)).build();
+        Layout layout = Layout.builder().dimension(InventoryDimension.of(9, 2)).build();
 
         View view = View.builder()
-                .archetype(InventoryArchetypes.DOUBLE_CHEST)
+                .archetype(InventoryArchetypes.CHEST)
                 .property(InventoryTitle.of(TextUtils.getText(category.getTitle())))
                 .build(container);
         view.open(player);
@@ -119,6 +137,10 @@ public class QuestsMenu {
             itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
             loreList.add(Text.of(""));
             loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
+        } else if (!quest.canCompleteQuest(questPlayer)) {
+            itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
+            loreList.add(Text.of(""));
+            loreList.add(TextUtils.getText("&c&lQUEST LOCKED"));
         } else {
             loreList.add(Text.of(""));
             loreList.add(TextUtils.getText("&bRewards:"));

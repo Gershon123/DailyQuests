@@ -4,11 +4,14 @@ import com.google.common.base.Splitter;
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import com.pixelmonmod.pixelmon.enums.items.EnumApricorns;
 import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.config.Permissions;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
+import io.github.gershon.dailyquests.quests.tasks.impl.BasePokemonTask;
 import io.github.gershon.dailyquests.quests.tasks.impl.CapturePokemonTask;
 import io.github.gershon.dailyquests.quests.tasks.impl.CraftItemTask;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
+import io.github.gershon.dailyquests.utils.QuestUtils;
 import io.github.gershon.dailyquests.validation.ApricornValidation;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -32,7 +35,7 @@ public class EditQuest {
 
     private CommandSpec commandSpec = CommandSpec.builder()
             .description(Text.of("Edit a quest"))
-            .permission("DailyQuests.command.edit")
+            .permission(Permissions.EDIT_QUESTS)
             .arguments(
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("id"))),
                     GenericArguments.remainingJoinedStrings(Text.of("args"))
@@ -86,9 +89,14 @@ public class EditQuest {
                     break;
                 case "icon":
                     quest.setIcon(properties.get("icon"));
+                    break;
                 case "position":
                     quest.setPosition(parseNumber(properties.get("position"), player));
                     break;
+                case "requiredQuestId":
+                    if (QuestUtils.questExists(properties.get("requiredQuestId"), DailyQuests.getInstance().getQuests())) {
+                        quest.setRequiredQuestId(properties.get("requiredQuestId"));
+                    }
             }
         });
 
@@ -103,8 +111,10 @@ public class EditQuest {
                     apricornTask.setHarvestAny(Boolean.parseBoolean(properties.get("any")));
                 }
                 break;
+            case DEFEAT_POKEMON:
+            case HATCH_POKEMON:
             case CATCH_POKEMON:
-                final CapturePokemonTask capturePokemonTask = (CapturePokemonTask) task;
+                final BasePokemonTask capturePokemonTask = (BasePokemonTask) task;
                 if (EnumSpecies.hasPokemon(properties.get("pokemon"))) {
                     capturePokemonTask.setSpecies(EnumSpecies.valueOf(properties.get("pokemon")));
                 }

@@ -11,10 +11,7 @@ import io.github.gershon.dailyquests.quests.rewards.ItemReward;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
-import io.github.gershon.dailyquests.quests.tasks.impl.BattlePokemonTask;
-import io.github.gershon.dailyquests.quests.tasks.impl.CapturePokemonTask;
-import io.github.gershon.dailyquests.quests.tasks.impl.CraftItemTask;
-import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
+import io.github.gershon.dailyquests.quests.tasks.impl.*;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -32,7 +29,8 @@ public class QuestStorage {
             .registerSubtype(HarvestApricornTask.class, "HARVEST_APRICORN")
             .registerSubtype(BattlePokemonTask.class, "DEFEAT_POKEMON")
             .registerSubtype(CraftItemTask.class, "CRAFT_ITEM")
-            .registerSubtype(CapturePokemonTask.class, "CATCH_POKEMON");
+            .registerSubtype(CapturePokemonTask.class, "CATCH_POKEMON")
+            .registerSubtype(EggHatchTask.class, "HATCH_POKEMON");
     private RuntimeTypeAdapterFactory<Reward> rewardTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Reward.class, "rewardType")
             .registerSubtype(ItemReward.class, "ITEM")

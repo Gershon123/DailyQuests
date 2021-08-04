@@ -1,12 +1,8 @@
 package io.github.gershon.dailyquests.quests.tasks;
 
-import io.github.gershon.dailyquests.quests.tasks.impl.BattlePokemonTask;
-import io.github.gershon.dailyquests.quests.tasks.impl.CapturePokemonTask;
-import io.github.gershon.dailyquests.quests.tasks.impl.CraftItemTask;
-import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
+import io.github.gershon.dailyquests.quests.tasks.impl.*;
 
 public class TaskFactory {
-
 
     public static Task createTask(String title, TaskType taskType, int amount) {
         switch (taskType) {
@@ -18,6 +14,8 @@ public class TaskFactory {
                 return new BattlePokemonTask(title, amount);
             case CRAFT_ITEM:
                 return new CraftItemTask(title, amount);
+            case HATCH_POKEMON:
+                return new EggHatchTask(title, amount);
             default:
                 return null;
         }

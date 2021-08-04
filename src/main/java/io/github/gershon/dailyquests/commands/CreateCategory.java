@@ -1,11 +1,9 @@
 package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.config.Permissions;
 import io.github.gershon.dailyquests.quests.categories.Category;
-import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import io.github.gershon.dailyquests.utils.CategoryUtils;
-import io.github.gershon.dailyquests.utils.QuestUtils;
-import io.github.gershon.dailyquests.utils.TaskUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -21,7 +19,7 @@ public class CreateCategory {
 
     private CommandSpec commandSpec = CommandSpec.builder()
             .description(Text.of("Creates a category"))
-            .permission("DailyQuests.command.createcategory")
+            .permission(Permissions.CREATE_CATEGORIES)
             .arguments(
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("id"))),
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("title")))

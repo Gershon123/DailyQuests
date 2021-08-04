@@ -5,6 +5,8 @@ import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.utils.QuestPlayerUtils;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,10 +48,28 @@ public class QuestPlayer {
         this.questProgressMap = questProgressMap;
     }
 
+    public QuestProgress getQuestProgress(String id) {
+        return questProgressMap.get(id);
+    }
+
+    public boolean questIsComplete(String id) {
+        QuestProgress questProgress = getQuestProgress(id);
+        return questProgress != null ? questProgress.isCompleted() : false;
+    }
+
+    public boolean hasPermission(String permission) {
+        Player player = Sponge.getServer().getPlayer(getPlayerId()).get();
+        return player != null && player.hasPermission(permission);
+    }
+
     public void update() {
         for (String key : questProgressMap.keySet()) {
             QuestProgress questProgress = questProgressMap.get(key);
             Quest quest = DailyQuests.getInstance().quests.get(questProgress.getQuestId());
+            if (quest == null) {
+                questProgressMap.remove(questProgress.getQuestId());
+                continue;
+            }
             if (quest.getQuestType() == QuestType.REPEATABLE && questProgress.isCompleted()) {
                 RepeatableQuest repeatableQuest = (RepeatableQuest) quest;
                 if (repeatableQuest.getCooldown(questProgress) <= 0) {

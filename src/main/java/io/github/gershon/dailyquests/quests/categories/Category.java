@@ -2,11 +2,15 @@ package io.github.gershon.dailyquests.quests.categories;
 
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.utils.CategoryUtils;
+import io.github.gershon.dailyquests.utils.TextUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Category {
     private String id;
@@ -48,16 +52,12 @@ public class Category {
         return categoryType;
     }
 
-    public ArrayList<String> getLore() {
-        return lore;
+    public List<Text> getLore() {
+        return lore.stream().map(lore -> TextUtils.getText(lore)).collect(Collectors.toList());
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setPoint(int position) {
-        this.position = position;
     }
 
     public void setLore(ArrayList<String> lore) {

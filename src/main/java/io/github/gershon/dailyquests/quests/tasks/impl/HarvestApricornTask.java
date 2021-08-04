@@ -51,12 +51,12 @@ public class HarvestApricornTask extends Task {
     public static List<Quest> getApplicableQuests(List<Quest> quests, EnumApricorns harvestedApricorn) {
         return quests != null ? quests.stream().filter(quest -> {
             Task task = quest.getTask();
-            if (task == null || task.getTaskType() != TaskType.HARVEST_APRICORN) {
+            if (!Task.applicableTask(task, TaskType.HARVEST_APRICORN)) {
                 return false;
             }
 
             HarvestApricornTask apricornTask = (HarvestApricornTask) task;
-            return apricornTask != null ? apricornTask.isHarvestAny() || apricornTask.getApricorn() == harvestedApricorn : false;
+            return apricornTask != null && (apricornTask.isHarvestAny() || apricornTask.getApricorn() == harvestedApricorn);
         }).collect(Collectors.toList()) : new ArrayList<>();
     }
 }

@@ -188,6 +188,7 @@ public class DailyQuests {
         Pixelmon.EVENT_BUS.register(new BeatWildPixelmonListener());
         Pixelmon.EVENT_BUS.register(new CaptureListener());
         Pixelmon.EVENT_BUS.register(new HarvestApricornListener());
+        Pixelmon.EVENT_BUS.register(new EggHatchListener());
     }
 
     public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {

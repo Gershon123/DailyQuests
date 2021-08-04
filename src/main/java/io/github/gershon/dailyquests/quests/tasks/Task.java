@@ -36,4 +36,11 @@ public abstract class Task {
     public void completeTask(Player player) {
     }
 
+    public static boolean applicableTask(Task task, TaskType taskType) {
+        if (task == null || task.getTaskType() == taskType) {
+            return true;
+        }
+        return false;
+    }
+
 }

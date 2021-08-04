@@ -53,7 +53,7 @@ public class CraftItemTask extends Task {
     public static List<Quest> getApplicableQuests(List<Quest> quests, ItemType itemType) {
         return quests != null ? quests.stream().filter(quest -> {
             Task task = quest.getTask();
-            if (task == null || task.getTaskType() != TaskType.CRAFT_ITEM) {
+            if (!Task.applicableTask(task, TaskType.CRAFT_ITEM)) {
                 return false;
             }
 

@@ -41,7 +41,8 @@ public class QuestPlayerUtils {
     public static List<Quest> getQuestsFromQuestPlayer(QuestPlayer questPlayer, List<Quest> quests) {
         return quests.stream()
                 .filter(quest -> questPlayer.getQuestProgressMap().values().stream()
-                        .anyMatch(value -> value.getQuestId().equals(quest.getId()))
+                        .anyMatch(value -> value.getQuestId().equals(quest.getId())
+                                && quest.canCompleteQuest(questPlayer))
                 ).collect(Collectors.toList());
     }
 

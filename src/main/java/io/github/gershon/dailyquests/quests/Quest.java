@@ -2,6 +2,7 @@ package io.github.gershon.dailyquests.quests;
 
 import com.google.gson.annotations.Expose;
 import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.config.Permissions;
 import io.github.gershon.dailyquests.player.QuestPlayer;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
@@ -29,11 +30,13 @@ public abstract class Quest {
     private String id;
     private String title;
     private String categoryId;
+    private String requiredQuestId;
     private int position;
     private Task task;
     private ArrayList<Reward> rewards;
     private ArrayList<String> lore;
     private String icon;
+    private boolean requirePermission;
     private transient QuestType questType;
 
     public Quest(String id, String title, Task task, ArrayList<Reward> rewards, ItemType icon, QuestType questType) {
@@ -81,6 +84,10 @@ public abstract class Quest {
         return categoryId;
     }
 
+    public String getRequiredQuestId() {
+        return requiredQuestId;
+    }
+
     public int getPosition() {
         return position;
     }
@@ -95,6 +102,14 @@ public abstract class Quest {
 
     public ItemType getIcon() {
         return Sponge.getRegistry().getType(ItemType.class, icon).get();
+    }
+
+    public boolean isRequirePermission() {
+        return requirePermission;
+    }
+
+    public String getPermission() {
+        return DailyQuests.ID + ".quests." + id;
     }
 
     public QuestType getQuestType() {
@@ -117,8 +132,27 @@ public abstract class Quest {
         this.position = position;
     }
 
+
+    public void setRequiredQuestId(String requiredQuestId) {
+        this.requiredQuestId = requiredQuestId;
+    }
+
     public void setLore(ArrayList<String> lore) {
         this.lore = lore;
+    }
+
+    public boolean canCompleteQuest(QuestPlayer player) {
+        if (requiredQuestId != null) {
+            Quest requiredQuest = DailyQuests.getInstance().quests.get(requiredQuestId);
+            if (requiredQuest != null && !player.getQuestProgressMap().get(requiredQuestId).isCompleted()) {
+                return false;
+            }
+        }
+        if (!player.hasPermission(Permissions.COMPLETE_QUESTS) ||
+                (requirePermission && !player.hasPermission(getPermission()))) {
+            return false;
+        }
+        return true;
     }
 
     public void setIcon(String icon) {
