@@ -7,23 +7,24 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CraftItemTask extends Task {
+public class SmeltItemTask extends Task {
 
     private String itemType;
     private boolean any;
 
-    public CraftItemTask(String title, int amount) {
-        super(title, TaskType.CRAFT_ITEM, amount);
-        itemType = ItemTypes.DIAMOND_SWORD.getId();
+    public SmeltItemTask(String title, int amount) {
+        super(title, TaskType.SMELT_ITEM, amount);
+        itemType = ItemTypes.GOLD_INGOT.getId();
     }
 
-    public CraftItemTask() {
-        super(TaskType.CRAFT_ITEM);
+    public SmeltItemTask() {
+        super(TaskType.SMELT_ITEM);
     }
 
     public ItemType getItemType() {
@@ -47,16 +48,16 @@ public class CraftItemTask extends Task {
         super.completeTask(player);
     }
 
-    public static List<Quest> getApplicableQuests(List<Quest> quests, ItemType itemType) {
+    public static List<Quest> getApplicableQuests(List<Quest> quests, ItemStack itemStack) {
         return quests != null ? quests.stream().filter(quest -> {
             Task task = quest.getTask();
-            if (!Task.applicableTask(task, TaskType.CRAFT_ITEM)) {
+            if (!Task.applicableTask(task, TaskType.SMELT_ITEM) || itemStack == null || itemStack.isEmpty()) {
                 return false;
             }
 
-            CraftItemTask craftItemTask = (CraftItemTask) task;
+            SmeltItemTask craftItemTask = (SmeltItemTask) task;
             return craftItemTask != null && (craftItemTask.isAny() ||
-                    craftItemTask.getItemType().getId().equals(itemType.getId()));
+                    itemStack.getType().getId().equals(craftItemTask.getItemType().getId()));
         }).collect(Collectors.toList()) : new ArrayList<>();
     }
 }

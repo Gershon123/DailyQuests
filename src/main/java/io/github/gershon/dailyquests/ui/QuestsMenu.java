@@ -13,9 +13,11 @@ import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.utils.CategoryUtils;
 import io.github.gershon.dailyquests.utils.QuestPlayerUtils;
+import io.github.gershon.dailyquests.utils.Sounds;
 import io.github.gershon.dailyquests.utils.TextUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
@@ -76,7 +78,7 @@ public class QuestsMenu {
                 Consumer<Action.Click> clickCategory = click -> Task.builder().execute(task -> {
                     player.closeInventory();
                     openCategory(player, category);
-                    //player.playSound(SoundType.of());
+                    Sounds.playSound(player, Sounds.MENU_CLICK);
                 }).submit(DailyQuests.getInstance());
 
                 view.setElement(category.getPosition(), Element.of(itemStack, clickCategory));
@@ -118,6 +120,7 @@ public class QuestsMenu {
         Consumer<Action.Click> back = click -> Task.builder().execute(task -> {
             player.closeInventory();
             openMenu(player);
+            Sounds.playSound(player, Sounds.MENU_CLICK);
         }).submit(DailyQuests.getInstance());
         view.setElement(0, Element.of(backButton, back));
         return view;

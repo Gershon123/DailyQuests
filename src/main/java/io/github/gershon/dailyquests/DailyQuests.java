@@ -11,6 +11,9 @@ import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.storage.CategoryStorage;
 import io.github.gershon.dailyquests.storage.QuestPlayerStorage;
 import io.github.gershon.dailyquests.storage.QuestStorage;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -119,13 +122,6 @@ public class DailyQuests {
         configManager = HoconConfigurationLoader.builder().setPath(configDir.resolve("dailyquests.conf")).build();
         loadItems();
         questPlayerStorage = new QuestPlayerStorage();
-
-        try {
-            this.dbPath = String.format("jdbc:h2:%s/players.db;mode=MySQL", getDefConfig().getParentFile().getAbsolutePath());
-            this.dataSource = Sponge.getServiceManager().provide(SqlService.class).get().getDataSource(dbPath);
-        } catch (Exception exception) {
-            logger.error("Error loading plugin " + exception.getMessage());
-        }
         Config.setup(configDir, configManager);
         logger.info("Registering listeners...");
         registerListeners();
@@ -134,7 +130,6 @@ public class DailyQuests {
         logger.info("Successfully initializated!");
         toggle = new HashSet<>();
         scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
-
     }
 
     public void loadItems() {
@@ -153,7 +148,6 @@ public class DailyQuests {
         } else {
             updateQuestPlayers();
         }
-
     }
 
     @Listener
@@ -185,10 +179,13 @@ public class DailyQuests {
     private void registerListeners() {
         game.getEventManager().registerListeners(this, new PlayerJoinListener());
         game.getEventManager().registerListeners(this, new CraftItemListener());
+        MinecraftForge.EVENT_BUS.register(new SmeltItemListener());
         Pixelmon.EVENT_BUS.register(new BeatWildPixelmonListener());
         Pixelmon.EVENT_BUS.register(new CaptureListener());
         Pixelmon.EVENT_BUS.register(new HarvestApricornListener());
         Pixelmon.EVENT_BUS.register(new EggHatchListener());
+        Pixelmon.EVENT_BUS.register(new PixelmonFishingListener());
+        Pixelmon.EVENT_BUS.register(new CurryListener());
     }
 
     public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {

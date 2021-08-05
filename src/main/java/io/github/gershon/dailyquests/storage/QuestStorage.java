@@ -29,7 +29,10 @@ public class QuestStorage {
             .registerSubtype(HarvestApricornTask.class, "HARVEST_APRICORN")
             .registerSubtype(BattlePokemonTask.class, "DEFEAT_POKEMON")
             .registerSubtype(CraftItemTask.class, "CRAFT_ITEM")
+            .registerSubtype(SmeltItemTask.class, "SMELT_ITEM")
             .registerSubtype(CapturePokemonTask.class, "CATCH_POKEMON")
+            .registerSubtype(FishingPokemonTask.class, "FISHING_POKEMON")
+            .registerSubtype(CurryTask.class, "COOK_CURRY")
             .registerSubtype(EggHatchTask.class, "HATCH_POKEMON");
     private RuntimeTypeAdapterFactory<Reward> rewardTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(Reward.class, "rewardType")

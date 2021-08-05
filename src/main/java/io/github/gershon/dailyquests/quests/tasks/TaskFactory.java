@@ -16,6 +16,12 @@ public class TaskFactory {
                 return new CraftItemTask(title, amount);
             case HATCH_POKEMON:
                 return new EggHatchTask(title, amount);
+            case FISHING_POKEMON:
+                return new FishingPokemonTask(title, amount);
+            case COOK_CURRY:
+                return new CurryTask(title, amount);
+            case SMELT_ITEM:
+                return new SmeltItemTask(title, amount);
             default:
                 return null;
         }

@@ -8,18 +8,22 @@ import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
-import io.github.gershon.dailyquests.utils.CategoryUtils;
-import io.github.gershon.dailyquests.utils.QuestUtils;
-import io.github.gershon.dailyquests.utils.TextUtils;
+import io.github.gershon.dailyquests.utils.*;
 import net.minecraft.item.Item;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.effect.sound.SoundTypes;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.projectile.Firework;
+import org.spongepowered.api.item.FireworkEffect;
+import org.spongepowered.api.item.FireworkShapes;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.Color;
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +165,9 @@ public abstract class Quest {
 
     public void completeQuest(Player player) {
         rewards.forEach(reward -> reward.giveReward(player));
-        player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " quest!"));
+        player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " &r&aquest!"));
+        Sounds.playSound(player, Sounds.QUEST_COMPLETE);
+        Fireworks.questComplete(player);
         QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
         questPlayer.getQuestProgressMap().get(id).setCompleted(true);
         questPlayer.getQuestProgressMap().get(id).setCompletedTime(LocalDateTime.now());
