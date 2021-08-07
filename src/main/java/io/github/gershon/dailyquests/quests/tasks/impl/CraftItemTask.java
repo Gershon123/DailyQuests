@@ -3,7 +3,6 @@ package io.github.gershon.dailyquests.quests.tasks.impl;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
@@ -12,34 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CraftItemTask extends Task {
-
-    private String itemType;
-    private boolean any;
+public class CraftItemTask extends BaseItemTask {
 
     public CraftItemTask(String title, int amount) {
         super(title, TaskType.CRAFT_ITEM, amount);
-        itemType = ItemTypes.DIAMOND_SWORD.getId();
+        setItemType(ItemTypes.DIAMOND_SWORD.getId());
     }
 
     public CraftItemTask() {
         super(TaskType.CRAFT_ITEM);
-    }
-
-    public ItemType getItemType() {
-        return Sponge.getRegistry().getType(ItemType.class, itemType).get();
-    }
-
-    public boolean isAny() {
-        return any;
-    }
-
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
-    }
-
-    public void setAny(boolean any) {
-        this.any = any;
     }
 
     @Override

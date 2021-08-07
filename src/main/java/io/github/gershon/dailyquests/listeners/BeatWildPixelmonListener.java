@@ -19,7 +19,7 @@ public class BeatWildPixelmonListener extends BaseListener {
             for (PixelmonWrapper pw : event.wpp.allPokemon) {
                 EntityPixelmon pokemon = pw.entity;
                 pokemon.getPokemonData().getBaseStats().getTypeList();
-                List<Quest> battleQuests = BattlePokemonTask.getApplicableQuests(quests, pokemon.getSpecies());
+                List<Quest> battleQuests = BattlePokemonTask.getApplicableQuests(quests, pokemon);
                 updateQuestsForPlayer((Player) event.player, battleQuests, 1);
             }
         }

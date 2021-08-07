@@ -1,6 +1,5 @@
 package io.github.gershon.dailyquests.quests.tasks;
 
-
 // TO-DO: Only show Pixelmon tasks if the server has Pixelmon
 public enum TaskType {
     COOK_CURRY,

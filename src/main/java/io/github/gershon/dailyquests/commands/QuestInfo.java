@@ -1,9 +1,12 @@
 package io.github.gershon.dailyquests.commands;
 
 import io.github.gershon.dailyquests.DailyQuests;
+import io.github.gershon.dailyquests.config.Permissions;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
+import io.github.gershon.dailyquests.quests.tasks.impl.BaseItemTask;
+import io.github.gershon.dailyquests.quests.tasks.impl.BasePokemonTask;
 import io.github.gershon.dailyquests.quests.tasks.impl.HarvestApricornTask;
 import io.github.gershon.dailyquests.utils.QuestUtils;
 import org.spongepowered.api.command.CommandException;
@@ -21,7 +24,7 @@ public class QuestInfo {
 
     private CommandSpec commandSpec = CommandSpec.builder()
             .description(Text.of("Shows quest info"))
-            .permission("DailyQuests.command.info")
+            .permission(Permissions.INFO_QUESTS)
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("id"))))
             .executor(new CommandExecutor() {
                 @Override
@@ -53,9 +56,25 @@ public class QuestInfo {
                         }
                         switch (taskType) {
                             case HARVEST_APRICORN:
-                                HarvestApricornTask task = (HarvestApricornTask) quest.getTask();
-                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bApricorn: " + task.getApricorn())));
-                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bHarvest Any?: " + task.isHarvestAny())));
+                                HarvestApricornTask apricornTask = (HarvestApricornTask) quest.getTask();
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bApricorn: " + apricornTask.getApricorn())));
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bAny?: " + apricornTask.isAny())));
+                                break;
+                            case HATCH_POKEMON:
+                            case FISHING_POKEMON:
+                            case DEFEAT_POKEMON:
+                            case CATCH_POKEMON:
+                                BasePokemonTask pokemonTask = (BasePokemonTask) quest.getTask();
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bSpecies: " + pokemonTask.getSpecies())));
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bShiny?: " + pokemonTask.isShiny())));
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bAny?: " + pokemonTask.isAny())));
+                                break;
+                            case SMELT_ITEM:
+                            case CRAFT_ITEM:
+                                BaseItemTask itemTask = (BaseItemTask) quest.getTask();
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bItem: " + itemTask.getItemType())));
+                                player.sendMessage(Text.of(TextSerializers.FORMATTING_CODE.deserialize("&bAny?: " + itemTask.isAny())));
+                                break;
                         }
                     }
                     return CommandResult.success();

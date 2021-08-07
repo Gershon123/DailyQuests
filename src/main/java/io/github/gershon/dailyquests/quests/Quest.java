@@ -164,6 +164,7 @@ public abstract class Quest {
     }
 
     public void completeQuest(Player player) {
+        DailyQuests.getInstance().getLogger().info(player.getName() + " completed quest " + id);
         rewards.forEach(reward -> reward.giveReward(player));
         player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " &r&aquest!"));
         Sounds.playSound(player, Sounds.QUEST_COMPLETE);

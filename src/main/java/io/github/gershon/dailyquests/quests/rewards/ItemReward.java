@@ -1,5 +1,6 @@
 package io.github.gershon.dailyquests.quests.rewards;
 
+import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.utils.ItemUtils;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -33,7 +34,12 @@ public class ItemReward extends Reward {
 
     @Override
     public void giveReward(Player player) {
-        ItemStack itemStack = ItemStack.of(ItemUtils.getItemType(item), amount);
-        player.getInventory().offer(itemStack);
+        try {
+            ItemStack itemStack = ItemStack.of(ItemUtils.getItemType(item), amount);
+            player.getInventory().offer(itemStack);
+        } catch (Exception e) {
+            DailyQuests.getInstance().getLogger().error(e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

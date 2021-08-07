@@ -8,6 +8,7 @@ import io.github.gershon.dailyquests.utils.QuestPlayerUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -63,11 +64,12 @@ public class QuestPlayer {
     }
 
     public void update() {
+        ArrayList<String> questsToRemove = new ArrayList<>();
         for (String key : questProgressMap.keySet()) {
             QuestProgress questProgress = questProgressMap.get(key);
             Quest quest = DailyQuests.getInstance().quests.get(questProgress.getQuestId());
             if (quest == null) {
-                questProgressMap.remove(questProgress.getQuestId());
+                questsToRemove.add(questProgress.getQuestId());
                 continue;
             }
             if (quest.getQuestType() == QuestType.REPEATABLE && questProgress.isCompleted()) {
@@ -75,6 +77,11 @@ public class QuestPlayer {
                 if (repeatableQuest.getCooldown(questProgress) <= 0) {
                     questProgressMap.put(key, QuestPlayerUtils.getQuestProgressFromQuest(quest));
                 }
+            }
+        }
+        for (String key : questsToRemove) {
+            if (key != null) {
+                questProgressMap.remove(key);
             }
         }
     }

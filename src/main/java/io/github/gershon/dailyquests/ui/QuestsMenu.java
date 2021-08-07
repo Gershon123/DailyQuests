@@ -11,10 +11,7 @@ import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.QuestType;
 import io.github.gershon.dailyquests.quests.RepeatableQuest;
 import io.github.gershon.dailyquests.quests.categories.Category;
-import io.github.gershon.dailyquests.utils.CategoryUtils;
-import io.github.gershon.dailyquests.utils.QuestPlayerUtils;
-import io.github.gershon.dailyquests.utils.Sounds;
-import io.github.gershon.dailyquests.utils.TextUtils;
+import io.github.gershon.dailyquests.utils.*;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.sound.SoundTypes;
@@ -36,13 +33,15 @@ public class QuestsMenu {
     public static void openMenu(Player player) {
         PluginContainer container = DailyQuests.getInstance().getPluginContainer();
         QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
+        if (questPlayer == null) {
+            questPlayer = QuestPlayerUtils.createQuestPlayer(player);
+            DailyQuests.getInstance().playerMap.put(player.getUniqueId(), questPlayer);
+        }
         View view = View.builder()
                 .archetype(InventoryArchetypes.CHEST)
                 .property(InventoryTitle.of(TextUtils.getText("&e&lCategories")))
                 .build(container)
-                .define(Layout.builder()
-                        .dimension(InventoryDimension.of(9, 2))
-                        .build());
+                .define(Layout.builder().build());
 
         view.open(player);
 
@@ -137,7 +136,6 @@ public class QuestsMenu {
                 quest.getTask().getTotalAmount(),
                 TextUtils.getQuestProgress(quest, questPlayer)));
         if (questPlayer.getQuestProgressMap().get(quest.getId()).isCompleted()) {
-            itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
             loreList.add(Text.of(""));
             loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
         } else if (!quest.canCompleteQuest(questPlayer)) {

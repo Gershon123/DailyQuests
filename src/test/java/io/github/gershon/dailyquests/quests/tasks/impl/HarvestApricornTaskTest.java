@@ -36,7 +36,7 @@ class HarvestApricornTaskTest {
         quests.add(QuestUtils.createQuest("test4", "", QuestType.REPEATABLE, TaskType.HARVEST_APRICORN));
         HarvestApricornTask task = (HarvestApricornTask) quests.get(3).getTask();
         task.setApricorn(EnumApricorns.Pink);
-        task.setHarvestAny(true);
+        task.setAny(true);
 
         // Broke a black apricorn, the task is for pink apricorns but since harvest any is on it will count
         Assertions.assertTrue(HarvestApricornTask.getApplicableQuests(quests, EnumApricorns.Black).size() == 2);

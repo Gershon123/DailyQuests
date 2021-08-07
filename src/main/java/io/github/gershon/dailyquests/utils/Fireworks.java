@@ -15,7 +15,7 @@ public class Fireworks {
     public static void questComplete(Player player) {
         ArrayList<FireworkEffect> effects = new ArrayList<>();
         effects.add(FireworkEffect.builder().shape(FireworkShapes.BALL).color(Color.YELLOW).flicker(true).trail(true).build());
-        Firework firework = (Firework) player.getLocation().add(0, 2, 0).createEntity(EntityTypes.FIREWORK);
+        Firework firework = (Firework) player.getLocation().add(0, 6, 0).createEntity(EntityTypes.FIREWORK);
         firework.offer(Keys.FIREWORK_EFFECTS, effects);
         player.getLocation().spawnEntity(firework);
     }

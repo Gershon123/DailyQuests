@@ -8,6 +8,7 @@ import org.spongepowered.api.entity.living.player.Player;
 public abstract class BasePokemonTask extends Task {
     private EnumSpecies species;
     private boolean any;
+    private boolean shiny;
 
     public BasePokemonTask(String title, TaskType taskType, int amount) {
         super(title, taskType, amount);
@@ -26,12 +27,20 @@ public abstract class BasePokemonTask extends Task {
         return this.any;
     }
 
+    public boolean isShiny() {
+        return this.shiny;
+    }
+
     public void setSpecies(EnumSpecies species) {
         this.species = species;
     }
 
     public void setAny(boolean any) {
         this.any = any;
+    }
+
+    public void setShiny(boolean shiny) {
+        this.shiny = shiny;
     }
 
     @Override

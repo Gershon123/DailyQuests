@@ -108,7 +108,7 @@ public class EditQuest {
                     apricornTask.setApricorn(EnumApricorns.valueOf(properties.get("apricorn")));
                 }
                 if (properties.get("any") != null) {
-                    apricornTask.setHarvestAny(Boolean.parseBoolean(properties.get("any")));
+                    apricornTask.setAny(Boolean.parseBoolean(properties.get("any")));
                 }
                 break;
             case DEFEAT_POKEMON:
@@ -121,11 +121,15 @@ public class EditQuest {
                 if (properties.get("any") != null) {
                     capturePokemonTask.setAny(Boolean.parseBoolean(properties.get("any")));
                 }
+                if (properties.get("shiny") != null) {
+                    capturePokemonTask.setShiny(Boolean.parseBoolean(properties.get("shiny")));
+                }
                 break;
+            case SMELT_ITEM:
             case CRAFT_ITEM:
                 CraftItemTask craftItemTask = (CraftItemTask) task;
-                if (properties.get("item") != null) {
-                    final Optional<ItemType> itemType = Sponge.getRegistry().getType(ItemType.class, properties.get("item"));
+                if (properties.get("itemType") != null) {
+                    final Optional<ItemType> itemType = Sponge.getRegistry().getType(ItemType.class, properties.get("itemType"));
                     if (itemType != null && itemType.isPresent()) {
                         craftItemTask.setItemType(itemType.get().getId());
                     }

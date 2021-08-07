@@ -1,5 +1,6 @@
 package io.github.gershon.dailyquests.quests.tasks.impl;
 
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 public class CapturePokemonTask extends BasePokemonTask {
 
-
     public CapturePokemonTask(String title, int amount) {
         super(title, TaskType.CATCH_POKEMON, amount);
         setSpecies(EnumSpecies.Pikachu);
@@ -21,10 +21,7 @@ public class CapturePokemonTask extends BasePokemonTask {
         super(TaskType.CATCH_POKEMON);
     }
 
-    /*
-      Gets all of the appropriate quests with tasks related to the captured pokemon
-    */
-    public static List<Quest> getApplicableQuests(List<Quest> quests, EnumSpecies species) {
+    public static List<Quest> getApplicableQuests(List<Quest> quests, EntityPixelmon pixelmon) {
         return quests != null ? quests.stream().filter(quest -> {
             Task task = quest.getTask();
             if (!Task.applicableTask(task, TaskType.CATCH_POKEMON)) {
@@ -32,7 +29,12 @@ public class CapturePokemonTask extends BasePokemonTask {
             }
 
             CapturePokemonTask capturePokemonTask = (CapturePokemonTask) task;
-            return capturePokemonTask != null && (capturePokemonTask.isAny() || capturePokemonTask.getSpecies() == species);
+
+            if (capturePokemonTask.isShiny() && !pixelmon.getPokemonData().isShiny()) {
+                return false;
+            }
+            return capturePokemonTask != null && (capturePokemonTask.isAny()
+                    || capturePokemonTask.getSpecies() == pixelmon.getSpecies());
         }).collect(Collectors.toList()) : new ArrayList<>();
     }
 }

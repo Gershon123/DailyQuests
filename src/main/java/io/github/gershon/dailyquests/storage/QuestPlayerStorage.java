@@ -32,6 +32,7 @@ public class QuestPlayerStorage {
         } catch (Exception e) {
             DailyQuests.getInstance().getLogger().error("Failed to import " + file.getName());
             DailyQuests.getInstance().getLogger().error("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

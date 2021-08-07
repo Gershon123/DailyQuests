@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class HarvestApricornTask extends Task {
 
     private EnumApricorns apricorn;
-    private boolean harvestAny;
+    private boolean any;
 
     public HarvestApricornTask(String title, int amount) {
         super(title, TaskType.HARVEST_APRICORN, amount);
@@ -28,16 +28,16 @@ public class HarvestApricornTask extends Task {
         return apricorn;
     }
 
-    public boolean isHarvestAny() {
-        return harvestAny;
+    public boolean isAny() {
+        return any;
     }
 
     public void setApricorn(EnumApricorns apricorn) {
         this.apricorn = apricorn;
     }
 
-    public void setHarvestAny(boolean harvestAny) {
-        this.harvestAny = harvestAny;
+    public void setAny(boolean any) {
+        this.any = any;
     }
 
     @Override
@@ -45,9 +45,6 @@ public class HarvestApricornTask extends Task {
         super.completeTask(player);
     }
 
-    /*
-      Gets all of the appropriate quests with tasks related to the broken apricorn type
-    */
     public static List<Quest> getApplicableQuests(List<Quest> quests, EnumApricorns harvestedApricorn) {
         return quests != null ? quests.stream().filter(quest -> {
             Task task = quest.getTask();
@@ -56,7 +53,7 @@ public class HarvestApricornTask extends Task {
             }
 
             HarvestApricornTask apricornTask = (HarvestApricornTask) task;
-            return apricornTask != null && (apricornTask.isHarvestAny() || apricornTask.getApricorn() == harvestedApricorn);
+            return apricornTask != null && (apricornTask.isAny() || apricornTask.getApricorn() == harvestedApricorn);
         }).collect(Collectors.toList()) : new ArrayList<>();
     }
 }

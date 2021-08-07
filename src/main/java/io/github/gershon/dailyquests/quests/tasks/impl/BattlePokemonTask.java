@@ -1,5 +1,6 @@
 package io.github.gershon.dailyquests.quests.tasks.impl;
 
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
@@ -23,15 +24,19 @@ public class BattlePokemonTask extends BasePokemonTask {
     /*
       Gets all of the appropriate quests with tasks related to the battled type
     */
-    public static List<Quest> getApplicableQuests(List<Quest> quests, EnumSpecies species) {
+    public static List<Quest> getApplicableQuests(List<Quest> quests, EntityPixelmon pixelmon) {
         return quests != null ? quests.stream().filter(quest -> {
             Task task = quest.getTask();
             if (!Task.applicableTask(task, TaskType.DEFEAT_POKEMON)) {
                 return false;
             }
 
-            BattlePokemonTask capturePokemonTask = (BattlePokemonTask) task;
-            return capturePokemonTask != null && (capturePokemonTask.isAny() || capturePokemonTask.getSpecies() == species);
+            BattlePokemonTask battlePokemonTask = (BattlePokemonTask) task;
+            if (battlePokemonTask.isShiny() && !pixelmon.getPokemonData().isShiny()) {
+                return false;
+            }
+            return battlePokemonTask != null && (battlePokemonTask.isAny()
+                    || battlePokemonTask.getSpecies() == pixelmon.getSpecies());
         }).collect(Collectors.toList()) : new ArrayList<>();
     }
 }
