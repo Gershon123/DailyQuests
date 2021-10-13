@@ -61,7 +61,7 @@ public class QuestUtils {
     }
 
     public static void handleQuestTaskUpdate(Quest quest, QuestProgress questProgress, int amount, Player player) {
-        if (quest == null || questProgress == null || questProgress.isCompleted()) {
+        if (player == null || quest == null || questProgress == null || questProgress.isCompleted()) {
             return;
         }
 

@@ -24,6 +24,7 @@ public class BaseCommand {
             .child(new CreateCategory().getCommandSpec(), "createcategory")
             .child(new ReloadQuests().getCommandSpec(), "reload")
             .child(new AddReward().getCommandSpec(), "addreward")
+            .child(new CompleteQuest().getCommandSpec(), "complete")
             .executor(new CommandExecutor() {
                 @Override
                 public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

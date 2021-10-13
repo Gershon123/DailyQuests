@@ -12,6 +12,9 @@ public class CaptureListener extends BaseListener {
 
     @SubscribeEvent
     public void onSuccessfulCapture(CaptureEvent.SuccessfulCapture event) {
+        if (event == null || event.player == null) {
+            return;
+        }
         List<Quest> quests = getQuestsForPlayer((Player) event.player);
         if (quests != null && quests.size() > 0) {
             List<Quest> captureQuests = CapturePokemonTask.getApplicableQuests(quests, event.getPokemon());

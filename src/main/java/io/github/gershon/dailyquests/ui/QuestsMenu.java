@@ -131,10 +131,14 @@ public class QuestsMenu {
         });
 
         loreList.add(Text.of(""));
+        String taskProgress = quest.isInfoHidden(questPlayer)
+                ? "&7(???/???)"
+                : TextUtils.getQuestProgress(quest, questPlayer);
+
         loreList.add(TextUtils.progressBar(
                 questProgress.getTaskAmount(),
                 quest.getTask().getTotalAmount(),
-                TextUtils.getQuestProgress(quest, questPlayer)));
+                taskProgress));
         if (questPlayer.getQuestProgressMap().get(quest.getId()).isCompleted()) {
             loreList.add(Text.of(""));
             loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
@@ -159,12 +163,13 @@ public class QuestsMenu {
                                 + DurationFormatUtils.formatDuration(Math.max(cooldown, 0), "H:mm:ss", true)));
             }
         }
-        setItemStack(itemStack, quest, loreList);
+        Text questTitle = TextUtils.getText(quest.isInfoHidden(questPlayer) ? "&c???" : quest.getTitle());
+        setItemStack(itemStack, questTitle, loreList);
         return itemStack;
     }
 
-    private static void setItemStack(ItemStack itemStack, Quest quest, ArrayList<Text> loreList) {
-        itemStack.offer(Keys.DISPLAY_NAME, TextUtils.getText(quest.getTitle()));
+    private static void setItemStack(ItemStack itemStack, Text title, ArrayList<Text> loreList) {
+        itemStack.offer(Keys.DISPLAY_NAME, title);
         itemStack.offer(Keys.ITEM_LORE, loreList);
     }
 }

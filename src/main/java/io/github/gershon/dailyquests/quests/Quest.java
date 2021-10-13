@@ -41,6 +41,7 @@ public abstract class Quest {
     private ArrayList<String> lore;
     private String icon;
     private boolean requirePermission;
+    private boolean infoHidden;
     private transient QuestType questType;
 
     public Quest(String id, String title, Task task, ArrayList<Reward> rewards, ItemType icon, QuestType questType) {
@@ -112,6 +113,10 @@ public abstract class Quest {
         return requirePermission;
     }
 
+    public boolean isInfoHidden(QuestPlayer player) {
+        return infoHidden && !canCompleteQuest(player);
+    }
+
     public String getPermission() {
         return DailyQuests.ID + ".quests." + id;
     }
@@ -136,13 +141,16 @@ public abstract class Quest {
         this.position = position;
     }
 
-
     public void setRequiredQuestId(String requiredQuestId) {
         this.requiredQuestId = requiredQuestId;
     }
 
     public void setLore(ArrayList<String> lore) {
         this.lore = lore;
+    }
+
+    public void setInfoHidden(boolean infoHidden) {
+        this.infoHidden = infoHidden;
     }
 
     public boolean canCompleteQuest(QuestPlayer player) {
@@ -164,13 +172,18 @@ public abstract class Quest {
     }
 
     public void completeQuest(Player player) {
-        DailyQuests.getInstance().getLogger().info(player.getName() + " completed quest " + id);
-        rewards.forEach(reward -> reward.giveReward(player));
-        player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " &r&aquest!"));
-        Sounds.playSound(player, Sounds.QUEST_COMPLETE);
-        Fireworks.questComplete(player);
-        QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
-        questPlayer.getQuestProgressMap().get(id).setCompleted(true);
-        questPlayer.getQuestProgressMap().get(id).setCompletedTime(LocalDateTime.now());
+        try {
+            DailyQuests.getInstance().getLogger().info(player.getName() + " completed quest " + id);
+            QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
+            questPlayer.getQuestProgressMap().get(id).setCompleted(true);
+            questPlayer.getQuestProgressMap().get(id).setCompletedTime(LocalDateTime.now());
+            rewards.forEach(reward -> reward.giveReward(player));
+            player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " &r&aquest!"));
+            Sounds.playSound(player, Sounds.QUEST_COMPLETE);
+            Fireworks.questComplete(player);
+        } catch (Exception e) {
+            DailyQuests.getInstance().getLogger().error("Error completing quest " + this.id + " for " + player.getName());
+            DailyQuests.getInstance().getLogger().error(e.getMessage());
+        }
     }
 }
