@@ -21,7 +21,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 
 group 'io.github.gershon'
-version '1.12.2-1.0.0'
+version '1.12.2-1.0.1'
 archivesBaseName = "DailyQuests"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.

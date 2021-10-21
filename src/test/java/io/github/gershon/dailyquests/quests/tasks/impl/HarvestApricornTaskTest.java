@@ -18,7 +18,7 @@ class HarvestApricornTaskTest {
     @BeforeEach
     void beforeEach() {
         quests = new ArrayList<>();
-        quests.add(QuestUtils.createQuest("test1", "", QuestType.REPEATABLE, TaskType.BREAK_BLOCK));
+        quests.add(QuestUtils.createQuest("test1", "", QuestType.REPEATABLE, TaskType.DEFEAT_POKEMON));
         // Default is black apricorn, with harvest any turned off
         quests.add(QuestUtils.createQuest("test2", "", QuestType.REPEATABLE, TaskType.HARVEST_APRICORN));
         quests.add(QuestUtils.createQuest("test3", "", QuestType.REPEATABLE, TaskType.CATCH_POKEMON));

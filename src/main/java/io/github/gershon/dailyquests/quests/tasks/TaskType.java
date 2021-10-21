@@ -12,4 +12,5 @@ public enum TaskType {
     BREAK_BLOCK,
     CRAFT_ITEM,
     SMELT_ITEM,
+    BREW_ITEM,
 }

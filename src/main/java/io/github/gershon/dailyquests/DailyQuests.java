@@ -179,7 +179,9 @@ public class DailyQuests {
     private void registerListeners() {
         game.getEventManager().registerListeners(this, new PlayerJoinListener());
         game.getEventManager().registerListeners(this, new CraftItemListener());
+        game.getEventManager().registerListeners(this, new BreakBlockListener());
         MinecraftForge.EVENT_BUS.register(new SmeltItemListener());
+        MinecraftForge.EVENT_BUS.register(new BrewItemListener());
         Pixelmon.EVENT_BUS.register(new BeatWildPixelmonListener());
         Pixelmon.EVENT_BUS.register(new CaptureListener());
         Pixelmon.EVENT_BUS.register(new HarvestApricornListener());

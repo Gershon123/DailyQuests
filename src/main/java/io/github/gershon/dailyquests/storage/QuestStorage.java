@@ -30,6 +30,8 @@ public class QuestStorage {
             .registerSubtype(BattlePokemonTask.class, "DEFEAT_POKEMON")
             .registerSubtype(CraftItemTask.class, "CRAFT_ITEM")
             .registerSubtype(SmeltItemTask.class, "SMELT_ITEM")
+            .registerSubtype(BrewItemTask.class, "BREW_ITEM")
+            .registerSubtype(BreakBlockTask.class, "BREAK_BLOCK")
             .registerSubtype(CapturePokemonTask.class, "CATCH_POKEMON")
             .registerSubtype(FishingPokemonTask.class, "FISHING_POKEMON")
             .registerSubtype(CurryTask.class, "COOK_CURRY")

@@ -22,6 +22,10 @@ public class TaskFactory {
                 return new CurryTask(title, amount);
             case SMELT_ITEM:
                 return new SmeltItemTask(title, amount);
+            case BREW_ITEM:
+                return new BrewItemTask(title, amount);
+            case BREAK_BLOCK:
+                return new BreakBlockTask(title, amount);
             default:
                 return null;
         }
