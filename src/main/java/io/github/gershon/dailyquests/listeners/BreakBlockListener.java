@@ -18,11 +18,7 @@ public class BreakBlockListener extends BaseListener {
     @Listener(order = Order.LATE)
     public void PlayerBreaksBlock(ChangeBlockEvent.Break e, @Root Player player) {
 
-        if (e.isCancelled()) {
-            return;
-        }
-
-        if (player == null) {
+        if (e == null || player == null || e.isCancelled() || e.getTransactions() == null || e.getTransactions().size() == 0) {
             return;
         }
 

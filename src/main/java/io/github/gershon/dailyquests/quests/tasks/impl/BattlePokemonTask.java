@@ -2,6 +2,7 @@ package io.github.gershon.dailyquests.quests.tasks.impl;
 
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
+import com.pixelmonmod.pixelmon.enums.EnumType;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
@@ -32,11 +33,21 @@ public class BattlePokemonTask extends BasePokemonTask {
             }
 
             BattlePokemonTask battlePokemonTask = (BattlePokemonTask) task;
+
+            if (battlePokemonTask == null) {
+                return false;
+            }
+
             if (battlePokemonTask.isShiny() && !pixelmon.getPokemonData().isShiny()) {
                 return false;
             }
-            return battlePokemonTask != null && (battlePokemonTask.isAny()
-                    || battlePokemonTask.getSpecies() == pixelmon.getSpecies());
+
+            EnumType type = battlePokemonTask.getType();
+            if (type != null && pixelmon.getPokemonData().getBaseStats().getTypeList().contains(type)) {
+                return true;
+            }
+
+            return battlePokemonTask.isAny() || battlePokemonTask.getSpecies() == pixelmon.getSpecies();
         }).collect(Collectors.toList()) : new ArrayList<>();
     }
 }

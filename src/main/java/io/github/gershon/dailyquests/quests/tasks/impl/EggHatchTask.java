@@ -1,6 +1,7 @@
 package io.github.gershon.dailyquests.quests.tasks.impl;
 
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
+import com.pixelmonmod.pixelmon.enums.EnumType;
 import io.github.gershon.dailyquests.quests.Quest;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
@@ -27,6 +28,16 @@ public class EggHatchTask extends BasePokemonTask {
                 return false;
             }
             EggHatchTask eggHatchTask = (EggHatchTask) task;
+
+            if (eggHatchTask == null) {
+                return false;
+            }
+
+            EnumType type = eggHatchTask.getType();
+            if (type != null && species.getBaseStats().getTypeList().contains(type)) {
+                return true;
+            }
+
             return eggHatchTask != null && (eggHatchTask.isAny() || eggHatchTask.getSpecies() == species);
         }).collect(Collectors.toList()) : new ArrayList<>();
     }

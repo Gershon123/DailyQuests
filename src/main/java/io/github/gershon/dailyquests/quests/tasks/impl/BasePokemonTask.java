@@ -1,12 +1,14 @@
 package io.github.gershon.dailyquests.quests.tasks.impl;
 
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
+import com.pixelmonmod.pixelmon.enums.EnumType;
 import io.github.gershon.dailyquests.quests.tasks.Task;
 import io.github.gershon.dailyquests.quests.tasks.TaskType;
 import org.spongepowered.api.entity.living.player.Player;
 
 public abstract class BasePokemonTask extends Task {
     private EnumSpecies species;
+    private EnumType type;
     private boolean any;
     private boolean shiny;
 
@@ -23,6 +25,10 @@ public abstract class BasePokemonTask extends Task {
         return species;
     }
 
+    public EnumType getType() {
+        return type;
+    }
+
     public boolean isAny() {
         return this.any;
     }
@@ -33,6 +39,10 @@ public abstract class BasePokemonTask extends Task {
 
     public void setSpecies(EnumSpecies species) {
         this.species = species;
+    }
+
+    public void setType(EnumType type) {
+        this.type = type;
     }
 
     public void setAny(boolean any) {

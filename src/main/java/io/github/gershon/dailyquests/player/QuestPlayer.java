@@ -59,7 +59,7 @@ public class QuestPlayer {
     }
 
     public boolean hasPermission(String permission) {
-        Player player = Sponge.getServer().getPlayer(getPlayerId()).get();
+        Player player = Sponge.getServer().getPlayer(getPlayerId()).orElse(null);
         return player != null && player.hasPermission(permission);
     }
 
