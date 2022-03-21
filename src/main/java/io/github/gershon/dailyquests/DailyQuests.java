@@ -240,7 +240,9 @@ public class DailyQuests {
     public void updateQuestPlayers() {
         Task.builder().execute(() -> {
             for (QuestPlayer questPlayer : playerMap.values()) {
-                questPlayer.update();
+                if (questPlayer != null) {
+                    questPlayer.update();
+                }
             }
         }).async().interval(60L, TimeUnit.SECONDS).submit(DailyQuests.getInstance());
     }

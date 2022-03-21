@@ -102,6 +102,9 @@ public abstract class Quest {
     }
 
     public ArrayList<Reward> getRewards() {
+        if (rewards == null) {
+            return new ArrayList<>();
+        }
         return rewards;
     }
 
@@ -126,6 +129,9 @@ public abstract class Quest {
     }
 
     public List<Text> getLore() {
+        if (lore == null) {
+            return new ArrayList<>();
+        }
         return lore.stream().map(lore -> TextUtils.getText(lore)).collect(Collectors.toList());
     }
 
@@ -177,7 +183,7 @@ public abstract class Quest {
             QuestPlayer questPlayer = DailyQuests.getInstance().playerMap.get(player.getUniqueId());
             questPlayer.getQuestProgressMap().get(id).setCompleted(true);
             questPlayer.getQuestProgressMap().get(id).setCompletedTime(LocalDateTime.now());
-            rewards.forEach(reward -> reward.giveReward(player));
+            getRewards().forEach(reward -> reward.giveReward(player));
             player.sendMessage(TextUtils.getText("&aYou have completed the " + getTitle() + " &r&aquest!"));
             Sounds.playSound(player, Sounds.QUEST_COMPLETE);
             Fireworks.questComplete(player);
