@@ -139,6 +139,11 @@ public class QuestsMenu {
                 questProgress.getTaskAmount(),
                 quest.getTask().getTotalAmount(),
                 taskProgress));
+        loreList.add(Text.of(""));
+        loreList.add(TextUtils.getText("&bRewards:"));
+        quest.getRewards().forEach(reward -> {
+            loreList.add(TextUtils.getText("&b- " + reward.getName()));
+        });
         if (questPlayer.getQuestProgressMap().get(quest.getId()).isCompleted()) {
             loreList.add(Text.of(""));
             loreList.add(TextUtils.getText("&a&lQUEST COMPLETE"));
@@ -146,12 +151,6 @@ public class QuestsMenu {
             itemStack = ItemStack.of(ItemTypes.BARRIER, 1);
             loreList.add(Text.of(""));
             loreList.add(TextUtils.getText("&c&lQUEST LOCKED"));
-        } else {
-            loreList.add(Text.of(""));
-            loreList.add(TextUtils.getText("&bRewards:"));
-            quest.getRewards().forEach(reward -> {
-                loreList.add(TextUtils.getText("&b- " + reward.getName()));
-            });
         }
 
         if (quest.getQuestType() == QuestType.REPEATABLE) {

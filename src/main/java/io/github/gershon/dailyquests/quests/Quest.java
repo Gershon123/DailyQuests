@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import io.github.gershon.dailyquests.DailyQuests;
 import io.github.gershon.dailyquests.config.Permissions;
 import io.github.gershon.dailyquests.player.QuestPlayer;
+import io.github.gershon.dailyquests.player.QuestProgress;
 import io.github.gershon.dailyquests.quests.categories.Category;
 import io.github.gershon.dailyquests.quests.rewards.Reward;
 import io.github.gershon.dailyquests.quests.tasks.Task;
@@ -162,7 +163,8 @@ public abstract class Quest {
     public boolean canCompleteQuest(QuestPlayer player) {
         if (requiredQuestId != null) {
             Quest requiredQuest = DailyQuests.getInstance().quests.get(requiredQuestId);
-            if (requiredQuest != null && !player.getQuestProgressMap().get(requiredQuestId).isCompleted()) {
+            QuestProgress questProgress = player.getQuestProgressMap().get(requiredQuestId);
+            if (requiredQuest != null && questProgress != null && !questProgress.isCompleted()) {
                 return false;
             }
         }
