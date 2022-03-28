@@ -93,6 +93,9 @@ public class QuestsMenu {
         ArrayList<Quest> quests = CategoryUtils.getQuestsInCategory(category, DailyQuests.getInstance().getQuests());
         if (quests != null) {
             for (Quest quest : quests) {
+                if (quest == null) {
+                    continue;
+                }
                 QuestProgress questProgress = questPlayer.getQuestProgressMap().get(quest.getId());
                 ArrayList<Text> loreList = new ArrayList<>();
                 ItemStack itemStack = ItemStack.of(quest.getIcon(), 1);
