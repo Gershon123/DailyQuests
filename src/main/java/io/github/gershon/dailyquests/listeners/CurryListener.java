@@ -14,6 +14,9 @@ public class CurryListener extends BaseListener {
 
     @SubscribeEvent
     public void onCook(CurryFinishedEvent event) {
+        if (event.player == null) {
+            return;
+        }
         Optional<Player> playerOptional = Sponge.getServer().getPlayer(event.player.getUniqueID());
         if (!playerOptional.isPresent()) {
             return;
